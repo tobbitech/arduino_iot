@@ -147,7 +147,7 @@ void Connection::setMqttClientName(String clientName) {
 void Connection::setMqttMainTopic(String mainTopic) {
     _callbackTopic = mainTopic + "/command";        // topic for receiving commands
     _crTopic = mainTopic + "/commandResponse";      // topic for sending command responses and return data
-    _jsonTopic = mainTopic + "/telemetry/json";     // topic for sending data observations
+    // _jsonTopic = mainTopic + "/telemetry/json";     // topic for sending data observations
     _debugTopic = mainTopic + "/debug";             // topic for sending debug messages
 }
 
@@ -346,6 +346,8 @@ void Connection::subscribeMqttTopic(String topic)
     Connection::debug("Subscribing to topic " + topic);
 }
 
+Timer send_network_info_timer(1, "hour");
+
 void Connection::maintain()
 {
     _mqttClient.loop();
@@ -379,7 +381,8 @@ void Connection::maintain()
     }
     setStatusLeds();
 
-    if (_statusIntervalTimer.is_done() ) {
+    // if (_statusIntervalTimer.is_done() ) {
+    if (_send_network_info_timer.is_done() ) {    
         _mqttClient.publish((_mainTopic + "/ip").c_str(), WiFi.localIP().toString().c_str());
         _mqttClient.publish((_mainTopic + "/mac").c_str(), WiFi.macAddress().c_str());
     }
@@ -410,15 +413,15 @@ int Connection::publish(String topic, String message)
     
 }
 
-void Connection::publishTelemetry(String message) {
-    Connection::publish(_jsonTopic, message);
-}
+// void Connection::publishTelemetry(String message) {
+//     Connection::publish(_jsonTopic, message);
+// }
 
 void Connection::publishCommandResponse(String message) {
     // publish command response
     Connection::publish(_crTopic, message);
     // publish command response on telemetry topic
-    Connection::publishTelemetry(message);
+    // Connection::publishTelemetry(message);
 }
 
 void Connection::debug(String message)
