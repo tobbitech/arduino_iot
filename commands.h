@@ -12,6 +12,12 @@
 #define SCAN_I2C_BUS 14
 #define INIT_I2C 15
 
+// Non default commands
+#define GET_HAN_MESSAGE 100
+
+
+
+// NVS commands, not implemented
 #define NVS_READ 530
 #define NVS_WRITE 531
 #define NVS_INIT_ERASE 533
