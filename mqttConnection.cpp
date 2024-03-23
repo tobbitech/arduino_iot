@@ -276,7 +276,7 @@ void Connection::connect(
     
     Connection::wifiMqttConnect();
 
-    _statusIntervalTimer.set(1, "hour");
+    _statusIntervalTimer.set(30, "minutes");
 }
 
 void Connection::wifiMqttConnect() {
