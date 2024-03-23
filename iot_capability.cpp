@@ -21,7 +21,6 @@ void OnOffSwitch::begin() {
     pinMode(_pin, OUTPUT);
     (*_conn_pointer).subscribeMqttTopic(_mqtt_topic);
     (*_conn_pointer).debug("OnOffSwitch " + _name + " created on topic " + _mqtt_topic);
-    (*_conn_pointer).publish("test2/onoffswitch", "OnOffSwitch " + _name + " created on topic " + _mqtt_topic);
     (*_conn_pointer).maintain();
     _conn_pointer->debug("Using '->' to call member function from pointer to object");
     
