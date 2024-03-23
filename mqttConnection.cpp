@@ -346,7 +346,7 @@ void Connection::subscribeMqttTopic(String topic)
     Connection::debug("Subscribing to topic " + topic);
 }
 
-// Timer send_network_info_timer(1, "hour");
+// Timer send_network_info_timer(30, "minutes");
 
 void Connection::maintain()
 {
@@ -381,11 +381,11 @@ void Connection::maintain()
     }
     setStatusLeds();
 
-    // if (_statusIntervalTimer.is_done() ) {
+    if (_statusIntervalTimer.is_done() ) {
     // if (send_network_info_timer.is_done() ) {    
-    //     _mqttClient.publish((_mainTopic + "/ip").c_str(), WiFi.localIP().toString().c_str());
-    //     _mqttClient.publish((_mainTopic + "/mac").c_str(), WiFi.macAddress().c_str());
-    // }
+        _mqttClient.publish((_mainTopic + "/ip").c_str(), WiFi.localIP().toString().c_str());
+        _mqttClient.publish((_mainTopic + "/mac").c_str(), WiFi.macAddress().c_str());
+    }
 }
 
 PubSubClient Connection::get_mqttClient()
