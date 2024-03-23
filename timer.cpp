@@ -38,6 +38,8 @@ void Timer::set(float time, String unit)
         unit.equalsIgnoreCase("mins") ||
         unit.equals("m")
     ) { _wait_time_ms = time * 1000 * 60; }
+
+    Timer::start();
 }
 
 
