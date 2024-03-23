@@ -12,6 +12,7 @@
 // #include <WiFiClientSecure.h>
 #include <WiFiClient.h>
 #include "timer.h"
+#include "return_codes.h"
 
 // all library code before endif
 
