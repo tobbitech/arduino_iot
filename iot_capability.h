@@ -70,12 +70,13 @@ class InputMomentary
                 int pin, 
                 String name, 
                 String mqtt_topic, 
+                uint8_t mode = INPUT_MOMENTARY_HIGH_ON;
                 String on_value = "true", 
-                String off_value = "false", 
-                uint8_t mode = INPUT_MOMENTARY_HIGH_ON);
+                String off_value = "false"
+        );
         void begin();
         void check();
-        void set_threshold_voltage(ufloat voltage);
+        void set_threshold_voltage(float voltage);
 
 
 
@@ -87,7 +88,7 @@ class InputMomentary
         String _off_value;
         float _threshold_voltage;
         uint8_t _mode;
-        int16_t _last_value;
+        bool _last_state;
 
 
         
