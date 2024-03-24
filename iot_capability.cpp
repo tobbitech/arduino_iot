@@ -232,7 +232,9 @@ void InputMomentary::check() {
 
     if (state != _last_state) {
         _last_state = state;
-        _conn_pointer->debug("Momentary input " + _name + " changed to: " + String(state));
+        String debug_text = "Momentary input " + _name + " changed to: " + String(state);
+        if( _mode == INPUT_MOMENTARY_ANALOG) { debug_text += " with value " + String(value); }
+        _conn_pointer->debug(debug_text);
         String value = _on_value;
         if (state == false) { value = _off_value;}
         _conn_pointer->publish(_mqtt_topic, value);
