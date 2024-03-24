@@ -189,6 +189,7 @@ InputMomentary::InputMomentary(
             String off_value, 
             int mode) 
     {
+        _conn_pointer = conn_pointer;
         _pin = pin;
         _name = name;
         _mqtt_topic = mqtt_topic;
@@ -231,10 +232,10 @@ void InputMomentary::check() {
 
     if (state != _last_state) {
         _last_state = state;
-        conn_pointer->debug("Momentary input " + _name + " changed to: " + String(state));
+        _conn_pointer->debug("Momentary input " + _name + " changed to: " + String(state));
         String value = _on_value;
         if (state == false) { value = _off_value;}
-        conn_pointer->publish(_mqtt_topic, value);
+        _conn_pointer->publish(_mqtt_topic, value);
     }
 
 }
