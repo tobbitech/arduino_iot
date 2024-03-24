@@ -70,7 +70,7 @@ class InputMomentary
                 int pin, 
                 String name, 
                 String mqtt_topic, 
-                uint8_t mode = INPUT_MOMENTARY_HIGH_ON;
+                uint8_t mode = INPUT_MOMENTARY_HIGH_ON,
                 String on_value = "true", 
                 String off_value = "false"
         );
