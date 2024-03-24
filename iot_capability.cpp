@@ -178,3 +178,68 @@ void DS18B20_temperature_sensors::publishAllTemperatures()
         _conn_pointer->debug(_deviceNames[i] + ": " + _sensors.getTempC(_deviceAddresses[i]) + "C");
     }
 }   
+
+
+InputMomentary::InputMomentary(
+            Connection * conn_pointer, 
+            int pin, 
+            String name, 
+            String mqtt_topic, 
+            String on_value, 
+            String off_value, 
+            int mode) 
+    {
+        _pin = pin;
+        _name = name;
+        _mqtt_topic = mqtt_topic;
+        _on_value = on_value;
+        _off_value = off_value;
+        _mode = mode;
+        _threshold_voltage = 3.3/2;
+
+    }
+
+InputMomentary::begin() {
+    // pinMode must be set elsewhere
+    
+
+}
+
+InputMomentary::check() {
+    // to be run as often as possible
+    int16_t value 
+    bool state = false;
+    if (_mode == INPUT_MOMENTARY_ANALOG) {
+        value = analogRead(_pin);
+        threshold = (3.3 / 4096) * _threshold_voltage;
+        if (value > _threshold) {
+            state = true;
+        }
+    } else {
+        value = digitalRead(_pin);
+        if (_mode == INPUT_MOMENTARY_HIGH_ON) {
+            if (value > 0) {
+                state = true;
+            }
+        }
+        if (_mode == INPUT_MOMENTARY_LOW_ON) {
+            if (value == 0) {
+                state = true;
+            }
+        } 
+    }
+
+    if (state != _last_state) {
+        _last_state = state;
+        conn.debug("Momentary input " + _name + " changed to: " + String(state));
+        String value = _on_value;
+        if (state == false) { value = _off_value;}
+        conn.publish(_mqtt_topic, value);
+    }
+
+}
+
+
+InputMomentary::set_threshold_voltage(float new_threshold_voltage) {
+    _threshold_voltage = new_threshold_voltage;
+}
