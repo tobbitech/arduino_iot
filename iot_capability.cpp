@@ -207,7 +207,7 @@ void InputMomentary::begin() {
 
 void InputMomentary::check() {
     // to be run as often as possible
-    int16_t value 
+    int16_t value;
     bool state = false;
     if (_mode == INPUT_MOMENTARY_ANALOG) {
         value = analogRead(_pin);
