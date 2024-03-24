@@ -81,6 +81,7 @@ class InputMomentary
 
 
     private:
+        Connection * _conn_pointer;
         int _pin;
         String _name;
         String _mqtt_topic;
