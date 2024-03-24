@@ -211,8 +211,8 @@ void InputMomentary::check() {
     bool state = false;
     if (_mode == INPUT_MOMENTARY_ANALOG) {
         value = analogRead(_pin);
-        threshold = (3.3 / 4096) * _threshold_voltage;
-        if (value > _threshold) {
+        float threshold = (3.3 / 4096) * _threshold_voltage;
+        if (value > threshold) {
             state = true;
         }
     } else {
