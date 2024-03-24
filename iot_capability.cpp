@@ -231,10 +231,10 @@ void InputMomentary::check() {
 
     if (state != _last_state) {
         _last_state = state;
-        conn->debug("Momentary input " + _name + " changed to: " + String(state));
+        conn_pointer->debug("Momentary input " + _name + " changed to: " + String(state));
         String value = _on_value;
         if (state == false) { value = _off_value;}
-        conn->publish(_mqtt_topic, value);
+        conn_pointer->publish(_mqtt_topic, value);
     }
 
 }
