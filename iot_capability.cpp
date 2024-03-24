@@ -185,10 +185,10 @@ InputMomentary::InputMomentary(
             int pin, 
             String name, 
             String mqtt_topic, 
+            int mode,
             String on_value, 
-            String off_value, 
-            int mode) 
-    {
+            String off_value
+    ) {
         _conn_pointer = conn_pointer;
         _pin = pin;
         _name = name;
