@@ -199,13 +199,13 @@ InputMomentary::InputMomentary(
 
     }
 
-InputMomentary::begin() {
+void InputMomentary::begin() {
     // pinMode must be set elsewhere
     
 
 }
 
-InputMomentary::check() {
+void InputMomentary::check() {
     // to be run as often as possible
     int16_t value 
     bool state = false;
@@ -240,6 +240,6 @@ InputMomentary::check() {
 }
 
 
-InputMomentary::set_threshold_voltage(float new_threshold_voltage) {
+void InputMomentary::set_threshold_voltage(float new_threshold_voltage) {
     _threshold_voltage = new_threshold_voltage;
 }
