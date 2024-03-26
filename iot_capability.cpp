@@ -211,12 +211,18 @@ void InputMomentary::begin() {
 
 void InputMomentary::check() {
     // to be run as often as possible
-    int16_t value;
 
     if ( _debounce_timer.is_done() == false ) { 
         return;
-    }   
+    }
 
+    if ( _last_state == true ) {
+        _last_state = false;
+        _conn_pointer->publish(_mqtt_topic, _off_value );
+        return;
+    }
+
+    int16_t value;
     bool state = false;
     if (_mode == INPUT_MOMENTARY_ANALOG) {
         value = analogRead(_pin);
@@ -238,17 +244,26 @@ void InputMomentary::check() {
         } 
     }
 
-    if (state == true ) { _debounce_timer.set(_debounce_ms, "milliseconds"); }
-
-    if (state != _last_state) {
-        _last_state = state;
-        String debug_text = "Momentary input " + _name + " changed to: " + String(state);
+    if (state == true ) { 
+        _last_state = true;
+        _debounce_timer.set(_debounce_ms, "milliseconds"); 
+        String debug_text = "Momentary input " + _name + " closed";
         if( _mode == INPUT_MOMENTARY_ANALOG) { debug_text += " with value " + String(value); }
         _conn_pointer->debug(debug_text);
-        String value_str = _on_value;
-        if (state == false) { value_str = _off_value;}
-        _conn_pointer->publish(_mqtt_topic, value_str );
+        _conn_pointer->publish(_mqtt_topic, _on_value );
     }
+
+
+
+    // if (state != _last_state) {
+    //     _last_state = state;
+    //     String debug_text = "Momentary input " + _name + " changed to: " + String(state);
+    //     if( _mode == INPUT_MOMENTARY_ANALOG) { debug_text += " with value " + String(value); }
+    //     _conn_pointer->debug(debug_text);
+    //     String value_str = _on_value;
+    //     if (state == false) { value_str = _off_value;}
+    //     _conn_pointer->publish(_mqtt_topic, value_str );
+    // }
 }
 
 
