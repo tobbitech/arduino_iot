@@ -77,6 +77,7 @@ class InputMomentary
         void begin();
         void check();
         void set_threshold_voltage(float voltage);
+        void debounce(uint16_t milliseconds);
 
 
 
@@ -90,6 +91,8 @@ class InputMomentary
         float _threshold_voltage;
         uint8_t _mode;
         bool _last_state;
+        uint16_t _debounce_ms;
+        Timer _debounce_timer;
 
 
         
