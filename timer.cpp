@@ -3,7 +3,8 @@
 
 // Default constructor
 Timer::Timer() {
-
+    _start_time_ms = 0;
+    _wait_time_ms = 0;
 }
 
 Timer::Timer(float time, String unit, bool autostart) 
