@@ -207,6 +207,7 @@ void InputMomentary::begin() {
     // sets all switches to false on boot,
     // if not "true" state will linger
     _conn_pointer->publish(_mqtt_topic, _off_value);
+    _last_state = false;
 }
 
 void InputMomentary::check() {
@@ -215,6 +216,8 @@ void InputMomentary::check() {
     if ( _debounce_timer.is_done() == false ) { 
         return;
     }
+
+    _conn_pointer->debug(_name + ": Timer is done");
 
     if ( _last_state == true ) {
         _last_state = false;
