@@ -254,3 +254,7 @@ void InputMomentary::check() {
 void InputMomentary::set_threshold_voltage(float new_threshold_voltage) {
     _threshold_voltage = new_threshold_voltage;
 }
+
+void InputMomentary::debounce(int16_t debounce_milliseconds) {
+    _debounce_ms = debounce_milliseconds;
+}
