@@ -206,7 +206,7 @@ void InputMomentary::begin() {
 
     // sets all switches to false on boot,
     // if not "true" state will linger
-    _conn_pointer->publish(_mqtt_topic, false);
+    _conn_pointer->publish(_mqtt_topic, _off_value);
 }
 
 void InputMomentary::check() {
