@@ -217,7 +217,7 @@ void InputMomentary::check() {
         return;
     }
 
-    _conn_pointer->debug(_name + ": Timer is done");
+    // _conn_pointer->debug(_name + ": Timer is done");
 
     if ( _last_state == true ) {
         _last_state = false;
