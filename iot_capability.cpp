@@ -439,7 +439,7 @@ void HANreader::parse_message() {
                 // this is clock time - octet-string
                 int string_length = _message_buf[i++];
                 value_str = "";
-                uint16_t year  = _message_buf[i+1] | han_message[i] << 8;
+                uint16_t year  = _message_buf[i+1] | _message_buf[i] << 8;
                 i += 2;
                 uint8_t  month = _message_buf[i++];
                 uint8_t  day   = _message_buf[i++];
