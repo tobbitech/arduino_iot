@@ -97,4 +97,41 @@ class InputMomentary
 
 
 
+#define HAN_READ_TIMEOUT_MS 100
+#define HAN_MAX_MESSAGE_SIZE 2000
+
+class HANreader {
+    public:
+        HANreader(Connection * conn, String mqttTopic, uint8_t RXpin, uint8_t TXpin);
+        void begin();
+        void end();
+        void tick();
+        HardwareSerial serialHAN;
+        void parse_message(String message);
+        void parse_message();
+
+        struct han_line {
+            u_int8_t obis_code[6];
+            String name;
+            String unit;
+            String topic;
+        };
+
+    private:
+        Connection * _conn;
+        String _mqttTopic;
+        uint8_t _RXpin;
+        uint8_t _TXpin;
+        int16_t _state;
+        int16_t _prev_state;
+        char _recv_char;
+        String _message;
+        uint8_t _message_buf[HAN_MAX_MESSAGE_SIZE];
+        uint16_t _message_buf_pos;
+        void _receive_char();
+        uint32_t _last_byte_millis;
+        bool _match_sequence(uint16_t);
+        u_int16_t _no_han_lines;
+};
+
 #endif
