@@ -460,7 +460,7 @@ void HANreader::parse_message() {
                 }            
             } else if ( variable_type == 0x10 ){
                 // this is a i32 -> Current
-                int32_t value;
+                int16_t value;
                 value = _message_buf[i+1] | _message_buf[i] << 8;
                 i += 2 + 6; // +6 is the stuff after the value on each line
                 value_str = String(value);
@@ -470,7 +470,7 @@ void HANreader::parse_message() {
                 }
             } else if ( variable_type == 0x12 ) {
                 // this is a u32 -> Voltage
-                u_int32_t value;
+                uint16_t value;
                 value = _message_buf[i+1] | _message_buf[i] << 8;
                 i += 2 + 6; // +6 is the stuff after the value on each line
                 if (name=="Voltage L1" || name=="Voltage L2" || name=="Voltage L3" ) {
