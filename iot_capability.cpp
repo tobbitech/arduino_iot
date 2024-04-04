@@ -3,8 +3,6 @@
 #include <DallasTemperature.h>
 #include "iot_capability.h"
 #include "mqttConnection.h"
-#include "han.h"
-
 
 
 OnOffSwitch::OnOffSwitch(Connection * conn_pointer, int pin, String name, String mqtt_topic, String on_value, String off_value)
