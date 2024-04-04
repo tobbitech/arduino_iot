@@ -449,7 +449,7 @@ void HANreader::parse_message() {
                 uint8_t  second= _message_buf[i++];
 
                 value_str = String(year) + "." + String(month) + "." + String(day) + "-"
-                        + String(hour) + ":" + String(minute) + ":" + String(second) " ";
+                        + String(hour) + ":" + String(minute) + ":" + String(second) + " ";
 
                 for (int j = 8; j < string_length; j++) {
                     uint8_t octet = _message_buf[i++];
