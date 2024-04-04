@@ -422,8 +422,8 @@ void HANreader::parse_message() {
                 string_contents[j] = '\0';
                 value_str = string_contents;
             } else if (variable_type == 0x06) {
-                // this is a uint64 -> Energy, cumulative energy
-                u_int64_t value;
+                // this is a uint32 -> Energy, cumulative energy
+                u_int32_t value;
                 value = _message_buf[i+3] | _message_buf[i+2] << 8 | _message_buf[i+1] << 16 | _message_buf[i] << 24;
                 i += 4 + 6; // +6 is the stuff after the value on each line
                 value_str = String(value);
@@ -459,7 +459,7 @@ void HANreader::parse_message() {
                     }
                 }            
             } else if ( variable_type == 0x10 ){
-                // this is a i32 -> Current
+                // this is a i16 -> Current
                 int16_t value;
                 value = _message_buf[i+1] | _message_buf[i] << 8;
                 i += 2 + 6; // +6 is the stuff after the value on each line
@@ -469,7 +469,7 @@ void HANreader::parse_message() {
                     value_str = String(value_f, 1);
                 }
             } else if ( variable_type == 0x12 ) {
-                // this is a u32 -> Voltage
+                // this is a u16 -> Voltage
                 uint16_t value;
                 value = _message_buf[i+1] | _message_buf[i] << 8;
                 i += 2 + 6; // +6 is the stuff after the value on each line
