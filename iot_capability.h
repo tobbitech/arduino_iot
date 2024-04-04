@@ -135,8 +135,3 @@ class HANreader {
 };
 
 #endif
-
-
-
-
-#endif
