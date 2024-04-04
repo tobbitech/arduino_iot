@@ -439,14 +439,14 @@ void HANreader::parse_message() {
                 // this is clock time - octet-string
                 int string_length = _message_buf[i++];
                 value_str = "";
-                uint16_t year  = han_message[i+1] | han_message[i] << 8;
+                uint16_t year  = _message_buf[i+1] | han_message[i] << 8;
                 i += 2;
-                uint8_t  month = han_message[i++];
-                uint8_t  day   = han_message[i++];
-                uint8_t  dow   = han_message[i++];
-                uint8_t  hour  = han_message[i++];
-                uint8_t  minute= han_message[i++];
-                uint8_t  second= han_message[i++];
+                uint8_t  month = _message_buf[i++];
+                uint8_t  day   = _message_buf[i++];
+                uint8_t  dow   = _message_buf[i++];
+                uint8_t  hour  = _message_buf[i++];
+                uint8_t  minute= _message_buf[i++];
+                uint8_t  second= _message_buf[i++];
 
                 value_str = String(year) + "." + String(month) + "." + String(day) + "-"
                         + String(hour) + ":" + String(minute) + ":" + String(second) " ";
