@@ -421,8 +421,7 @@ void HANreader::parse_message() {
                 }
                 string_contents[j] = '\0';
                 value_str = string_contents;
-            }
-            else if (variable_type == 0x06) {
+            } else if (variable_type == 0x06) {
                 // this is a uint64 -> Energy, cumulative energy
                 u_int64_t value;
                 value = _message_buf[i+3] | _message_buf[i+2] << 8 | _message_buf[i+1] << 16 | _message_buf[i] << 24;
@@ -431,11 +430,34 @@ void HANreader::parse_message() {
 
                 if (name == "Cummulative active import" ||
                     name == "Cummulative active export" ||
-                    name=="Cummulative reactive import" ||
-                    name=="Cummulative reactive export" ) {
+                    name == "Cummulative reactive import" ||
+                    name == "Cummulative reactive export" ) {
                         float value_f = value / 100.0; // cumulative energy has resolution 0.01kWh
-                    }
+                        value_str = String(value_f, 2);
+                }
+            } else if (variable_type == 0x9) {
+                // this is clock time - octet-string
+                int string_length = _message_buf[i++];
+                value_str = "";
+                uint16_t year  = han_message[i+1] | han_message[i] << 8;
+                i += 2;
+                uint8_t  month = han_message[i++];
+                uint8_t  day   = han_message[i++];
+                uint8_t  dow   = han_message[i++];
+                uint8_t  hour  = han_message[i++];
+                uint8_t  minute= han_message[i++];
+                uint8_t  second= han_message[i++];
 
+                value_str = String(year) + "." + String(month) + "." + String(day) + "-"
+                        + String(hour) + ":" + String(minute) + ":" + String(second) " ";
+
+                for (int j = 8; j < string_length; j++) {
+                    uint8_t octet = _message_buf[i++];
+                    value_str += String(octet);
+                    if ( j < string_length -1 ) { 
+                        value_str += ".";
+                    }
+                }            
             } else if ( variable_type == 0x10 ){
                 // this is a i32 -> Current
                 int32_t value;
