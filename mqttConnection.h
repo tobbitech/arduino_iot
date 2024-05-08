@@ -16,6 +16,7 @@
 
 // all library code before endif
 
+
 class Connection 
 {
     public:
@@ -72,8 +73,13 @@ class Connection
         uint16_t _port;
         String _clientName;
         String _mainTopic;
-        // WiFiClientSecure _wifiClient = WiFiClientSecure();
+
+        #ifdef ARDUINO_IOT_USE_SSL
+        WiFiClientSecure _wifiClient = WiFiClientSecure();
+        #else
         WiFiClient _wifiClient = WiFiClient();
+        #endif
+
         PubSubClient _mqttClient;
         String _callbackTopic;
         String _debugTopic;

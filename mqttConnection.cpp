@@ -8,6 +8,11 @@
 #include "nvslogger.h"
 #include "timer.h"
 
+#ifdef ARDUINO_IOT_USE_SSL
+#include <WiFiClientSecure.h>
+#endif
+
+
 NvsLogger nvs2;
 
 // #include <SPI.h>
@@ -263,13 +268,16 @@ void Connection::connect(
     _sslRootCa = sslRootCa;
     _sslCert = sslCert;
     _sslKey = sslKey;
+
+    #ifdef ARDUINO_IOT_USE_SSL
+    _wifiClient.setCACert(_sslRootCa.c_str());
+    // _wifiClient.setCertificate(_sslCert.c_str());
+    // _wifiClient.setPrivateKey(_sslKey.c_str());
+    #endif
     
     _mqttClient.setServer(_host.c_str(), _port );
     _mqttClient.setClient(_wifiClient);
     _mqttClient.setCallback(callback);
-    // _wifiClient.setCACert(_sslRootCa.c_str());
-    // _wifiClient.setCertificate(_sslCert.c_str());
-    // _wifiClient.setPrivateKey(_sslKey.c_str());
     
     // set all topics
     Connection::setMqttMainTopic(_mainTopic);
