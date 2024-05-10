@@ -14,7 +14,7 @@
 #include "timer.h"
 #include "return_codes.h"
 
-#define ARDUINO_IOT_USE_SSL
+// #define ARDUINO_IOT_USE_SSL
 
 // all library code before endif
 
