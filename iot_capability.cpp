@@ -497,3 +497,45 @@ void HANreader::parse_message() {
         }
     }
 }
+
+
+VEdirectReader::VEdirectReader(Connection * conn, String mqttTopic, uint8_t RXpin, uint8_t TXpin): serialHAN(1)
+{
+    _RXpin = RXpin;
+    _TXpin = TXpin;
+    _conn = conn;
+    _mqttTopic = mqttTopic;
+}
+
+void VEdirectReader::begin() {
+    serialVE.begin(19200, SERIAL_8N1, _RXpin, _TXpin);
+    _last_byte_millis = 0;
+    _message = "";
+    _message_buf_pos = 0;
+}
+
+void VEdirectReader::end() {
+    serialVE.end();
+}
+
+void VEdirectReader::tick() {
+    uint32_t time_since_last_byte = millis() - _last_byte_millis;
+
+    if ( time_since_last_byte > VEDIRECT_TIMEOUT_MS && _message != "" ) {
+        _message_buf[_message_buf_pos] = '\0';
+        parse_message();
+        _message = "";
+        _message_buf_pos = 0;
+    }
+
+    if ( serialVE.available() > 0 ) {
+        char recv_char = serialVE.read();
+        _last_byte_millis = millis(); // reset timeout counter
+        _message += recv_char;
+        _message_buf[_message_buf_pos++] = recv_char;
+    }
+}
+
+void VEdirectReader::parse_message() {
+    conn->publish(_mqttTopic + "/VEdirect/raw", _message);
+}

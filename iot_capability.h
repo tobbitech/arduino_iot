@@ -134,4 +134,31 @@ class HANreader {
         u_int16_t _no_han_lines;
 };
 
+#define VEDIRECT_TIMEOUT_MS 100
+#define VEDIRECT_MESSAGE_SIZE 2000
+class VEdirectReader {
+    public:
+        VEdirectReader(Connection *conn, String mqttTopic, u_int8_t RXpin, u_int8_t TXpin);
+        void begin();
+        void end();
+        void tick();
+        HardwareSerial serialVE;
+        void parse_message();
+
+    private:
+        Connection * _conn;
+        String _mqttTopic;
+        uint8_t _RXpin;
+        uint8_t _TXpin;
+        int16_t _state;
+        int16_t _prev_state;
+        char _recv_char;
+        String _message;
+        uint8_t _message_buf[VEDIRECT_MESSAGE_SIZE];
+        uint16_t _message_buf_pos;
+        void _receive_char();
+        uint32_t _last_byte_millis;
+        // bool _match_sequence(uint16_t);
+}
+
 #endif
