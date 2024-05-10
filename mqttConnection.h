@@ -9,10 +9,12 @@
 #include <ArduinoJson.h>
 #include <NTPClient.h>
 #include <WiFiUdp.h>
-// #include <WiFiClientSecure.h>
+#include <WiFiClientSecure.h>
 #include <WiFiClient.h>
 #include "timer.h"
 #include "return_codes.h"
+
+#define ARDUINO_IOT_USE_SSL
 
 // all library code before endif
 
