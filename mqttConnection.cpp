@@ -8,10 +8,11 @@
 #include "nvslogger.h"
 #include "timer.h"
 
-#ifdef ARDUINO_IOT_USE_SSL
+// #ifdef ARDUINO_IOT_USE_SSL
 #include <WiFiClientSecure.h>
-#endif
+// #endif
 
+#define ARDUINO_IOT_USE_SSL
 
 NvsLogger nvs2;
 
