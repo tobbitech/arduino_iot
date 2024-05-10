@@ -31,6 +31,7 @@ class Connection
             String sslRootCa,
             String sslCert,
             String sslKey,
+            bool useSSL,
             uint16_t mqttPort, 
             String mqttClientName, 
             int wifiLedPin, 
@@ -72,15 +73,17 @@ class Connection
         String _ssid;
         String _passwd;
         String _host;
+        bool _useSSL;
         uint16_t _port;
         String _clientName;
         String _mainTopic;
 
-        #ifdef ARDUINO_IOT_USE_SSL
-        WiFiClientSecure _wifiClient = WiFiClientSecure();
-        #else
+        // #ifdef ARDUINO_IOT_USE_SSL
+        // WiFiClientSecure _wifiClient = WiFiClientSecure();
+        // #else
         WiFiClient _wifiClient = WiFiClient();
-        #endif
+        WiFiClientSecure _wifiSecureClient = WiFiClientSecure();
+        // #endif
 
         PubSubClient _mqttClient;
         String _callbackTopic;

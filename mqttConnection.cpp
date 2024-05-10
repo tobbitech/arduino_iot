@@ -8,12 +8,6 @@
 #include "nvslogger.h"
 #include "timer.h"
 
-// #ifdef ARDUINO_IOT_USE_SSL
-// #include <WiFiClientSecure.h>
-// #endif
-
-// #define ARDUINO_IOT_USE_SSL
-
 NvsLogger nvs2;
 
 // #include <SPI.h>
@@ -251,6 +245,7 @@ void Connection::connect(
     String sslRootCa,
     String sslCert,
     String sslKey,
+    bool useSSL = false,
     uint16_t mqttPort=1883, 
     String mqttClientName="MqttClient", 
     int wifiLedPin=4, 
@@ -269,16 +264,28 @@ void Connection::connect(
     _sslRootCa = sslRootCa;
     _sslCert = sslCert;
     _sslKey = sslKey;
+    _useSSL = useSSL;
     
-    #ifdef ARDUINO_IOT_USE_SSL
-    Serial.println("Setting CA cert (using SSL)");
-    _wifiClient.setCACert(_sslRootCa.c_str());
-    // _wifiClient.setCertificate(_sslCert.c_str());
-    // _wifiClient.setPrivateKey(_sslKey.c_str());
-    #endif
-    
+    // #ifdef ARDUINO_IOT_USE_SSL
+    // #endif
+
+    if (_useSSL) {
+        Serial.println("Setting CA cert (using SSL)");
+        _wifiSecureClient.setCACert(_sslRootCa.c_str());
+    // // _wifiSecureClient.setCertificate(_sslCert.c_str());
+    // // _wifiSecureClient.setPrivateKey(_sslKey.c_str());
+    }
+    else {
+
+    }
     _mqttClient.setServer(_host.c_str(), _port );
-    _mqttClient.setClient(_wifiClient);
+    if (_useSSL) {
+        _mqttClient.setClient(_wifiSecureClient);
+    }
+    else {
+        _mqttClient.setClient(_wifiClient);
+    }
+    
     _mqttClient.setCallback(callback);
     
     // set all topics
