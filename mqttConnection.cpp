@@ -268,8 +268,9 @@ void Connection::connect(
     _sslRootCa = sslRootCa;
     _sslCert = sslCert;
     _sslKey = sslKey;
-
+    
     #ifdef ARDUINO_IOT_USE_SSL
+    Serial.println("Setting CA cert (using SSL)");
     _wifiClient.setCACert(_sslRootCa.c_str());
     // _wifiClient.setCertificate(_sslCert.c_str());
     // _wifiClient.setPrivateKey(_sslKey.c_str());
