@@ -245,11 +245,11 @@ void Connection::connect(
     String sslRootCa,
     String sslCert,
     String sslKey,
-    bool useSSL = false,
     uint16_t mqttPort=1883, 
     String mqttClientName="MqttClient", 
     int wifiLedPin=4, 
-    int mqttLedPin=5
+    int mqttLedPin=5,
+    bool useSSL = false
     )
 {
     // set private variables
@@ -285,7 +285,7 @@ void Connection::connect(
     else {
         _mqttClient.setClient(_wifiClient);
     }
-    
+
     _mqttClient.setCallback(callback);
     
     // set all topics

@@ -31,11 +31,11 @@ class Connection
             String sslRootCa,
             String sslCert,
             String sslKey,
-            bool useSSL,
             uint16_t mqttPort, 
             String mqttClientName, 
             int wifiLedPin, 
-            int mqttLedPin
+            int mqttLedPin,
+            bool useSSL
         );
         void wifiMqttConnect();
         void maintain();
