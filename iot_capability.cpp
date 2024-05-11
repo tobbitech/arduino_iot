@@ -537,5 +537,5 @@ void VEdirectReader::tick() {
 }
 
 void VEdirectReader::parse_message() {
-    conn->publish(_mqttTopic + "/VEdirect/raw", _message);
+    _conn->publish(_mqttTopic + "/VEdirect/raw", _message);
 }
