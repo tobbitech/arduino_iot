@@ -162,6 +162,7 @@ class VEdirectReader {
         void _receive_char();
         uint32_t _last_byte_millis;
         // bool _match_sequence(uint16_t);
+        Timer send_raw_data_timer;
 };
 
 #endif
