@@ -511,6 +511,8 @@ VEdirectReader::VEdirectReader(Connection * conn, String mqttTopic, uint8_t RXpi
 void VEdirectReader::begin() {
     serialVE.begin(19200, SERIAL_8N1, _RXpin, _TXpin); // for hardwareserial
     send_raw_data_timer.set(10, "seconds");
+    _keys_to_parse = {"V", "I", "VPV", "PPV"};
+    _len_keys_to_parse = 4;
 
     // serialVE.begin(19200);
     // testSerial.begin(BAUD_RATE, EspSoftwareSerial::SWSERIAL_8N1, D7, D8, false, 95, 11);
@@ -549,7 +551,7 @@ void VEdirectReader::parse_message() {
         _conn->publish(_mqttTopic + "/VEdirect/raw", _message);
     }
 
-    String data_field = "none";
+    String key = "none";
     String value ="empty";
 
     bool separator_found = false;
@@ -557,9 +559,13 @@ void VEdirectReader::parse_message() {
     for (int i = 0; i < _message_buf_pos; i++) {
         if ( _message[i] == '\n') {
             // data field end:
-            _conn->debug("field: " + data_field + ", value: " + value);
-            // _conn->publish(_mqttTopic + "/parsed_data/" + data_field, value);
-            data_field = "";
+            for (int j = 0; j < _len_keys_to_parse; j++) {
+                if (key == _keys_to_parse[j]) {
+            _       conn->publish(_mqttTopic + "/parsed_data/" + data_field, value);
+                }
+            }
+            conn->debug("key: " + key + ", value: " + value);
+            key = "";
             value = "";
             separator_found = false;
         }
@@ -569,7 +575,7 @@ void VEdirectReader::parse_message() {
         }
         else if (separator_found == false ) {
             // get data field:
-            data_field += _message[i];
+            key += _message[i];
         }
         else {
             value += _message[i];

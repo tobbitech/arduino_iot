@@ -137,6 +137,7 @@ class HANreader {
 
 #define VEDIRECT_TIMEOUT_MS 100
 #define VEDIRECT_MESSAGE_SIZE 2000
+#define VEDIRECT_NUMBER_KEYS_TO_PARSE 20
 class VEdirectReader {
     public:
         VEdirectReader(Connection *conn, String mqttTopic, u_int8_t RXpin, u_int8_t TXpin);
@@ -163,6 +164,8 @@ class VEdirectReader {
         uint32_t _last_byte_millis;
         // bool _match_sequence(uint16_t);
         Timer send_raw_data_timer;
+        String _keys_to_parse[VEDIRECT_NUMBER_KEYS_TO_PARSE];
+        size_t _len_keys_to_parse;
 };
 
 #endif
