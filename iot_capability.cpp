@@ -499,7 +499,7 @@ void HANreader::parse_message() {
 }
 
 
-VEdirectReader::VEdirectReader(Connection * conn, String mqttTopic, uint8_t RXpin, uint8_t TXpin): serialVE(2)
+VEdirectReader::VEdirectReader(Connection * conn, String mqttTopic, uint8_t RXpin, uint8_t TXpin): serialVE(3)
 {
     _RXpin = RXpin;
     _TXpin = TXpin;
