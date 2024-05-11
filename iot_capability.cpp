@@ -554,7 +554,7 @@ void VEdirectReader::parse_message() {
 
     bool separator_found = false;
 
-    for (int i = 0, i < _message_buf_pos; i++) {
+    for (int i = 0; i < _message_buf_pos; i++) {
         if ( _message[i] == '\n') {
             // data field end:
             _conn->publish(_mqttTopic + "/parsed_data" + data_field, value);
