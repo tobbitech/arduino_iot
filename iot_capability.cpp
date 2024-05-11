@@ -564,7 +564,7 @@ void VEdirectReader::parse_message() {
             // data field end:
             for (int j = 0; j < _len_keys_to_parse; j++) {
                 if (key == _keys_to_parse[j]) {
-            _       conn->publish(_mqttTopic + "/parsed_data/" + data_field, value);
+                    _conn->publish(_mqttTopic + "/parsed_data/" + data_field, value);
                 }
             }
             conn->debug("key: " + key + ", value: " + value);
