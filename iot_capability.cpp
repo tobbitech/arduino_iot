@@ -564,10 +564,10 @@ void VEdirectReader::parse_message() {
             // data field end:
             for (int j = 0; j < _len_keys_to_parse; j++) {
                 if (key == _keys_to_parse[j]) {
-                    _conn->publish(_mqttTopic + "/parsed_data/" + data_field, value);
+                    _conn->publish(_mqttTopic + "/parsed_data/" + key, value);
                 }
             }
-            conn->debug("key: " + key + ", value: " + value);
+            _conn->debug("key: " + key + ", value: " + value);
             key = "";
             value = "";
             separator_found = false;
