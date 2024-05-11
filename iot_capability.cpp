@@ -511,7 +511,10 @@ VEdirectReader::VEdirectReader(Connection * conn, String mqttTopic, uint8_t RXpi
 void VEdirectReader::begin() {
     serialVE.begin(19200, SERIAL_8N1, _RXpin, _TXpin); // for hardwareserial
     send_raw_data_timer.set(10, "seconds");
-    _keys_to_parse = {"V", "I", "VPV", "PPV"};
+    _keys_to_parse[0] = "V";
+    _keys_to_parse[1] = "I";
+    _keys_to_parse[2] = "VPV";
+    _keys_to_parse[3] = "PPV";
     _len_keys_to_parse = 4;
 
     // serialVE.begin(19200);
