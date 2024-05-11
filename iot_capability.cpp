@@ -510,7 +510,7 @@ VEdirectReader::VEdirectReader(Connection * conn, String mqttTopic, uint8_t RXpi
 
 void VEdirectReader::begin() {
     serialVE.begin(19200, SERIAL_8N1, _RXpin, _TXpin); // for hardwareserial
-    send_raw_data_timer.set(10, "minutes");
+    send_raw_data_timer.set(10, "seconds");
 
     // serialVE.begin(19200);
     // testSerial.begin(BAUD_RATE, EspSoftwareSerial::SWSERIAL_8N1, D7, D8, false, 95, 11);
@@ -545,19 +545,19 @@ void VEdirectReader::tick() {
 }
 
 void VEdirectReader::parse_message() {
-    if( ! send_raw_data_timer.is_done() ) {
+    if( send_raw_data_timer.is_done() ) {
         _conn->publish(_mqttTopic + "/VEdirect/raw", _message);
     }
 
-    String data_field;
-    String value;
+    String data_field = "none";
+    String value ="empty";
 
     bool separator_found = false;
 
     for (int i = 0; i < _message_buf_pos; i++) {
         if ( _message[i] == '\n') {
             // data field end:
-            _conn->publish(_mqttTopic + "/parsed_data" + data_field, value);
+            _conn->publish(_mqttTopic + "/parsed_data/" + data_field, value);
             data_field = "";
             value = "";
             separator_found = false;
