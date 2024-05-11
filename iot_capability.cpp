@@ -565,9 +565,26 @@ void VEdirectReader::parse_message() {
             for (int j = 0; j < _len_keys_to_parse; j++) {
                 if (key == _keys_to_parse[j]) {
                     _conn->publish(_mqttTopic + "/parsed_data/" + key, value);
+                    
+                    if (key == "V") {
+                        float voltage = value.toInt() / 1000.0;
+                        _conn->publish(_mqttTopic + "/battery_voltage_V", String(voltage, 3))
+                    }
+                    else if (key == "I") {
+                        float current = value.toInt() / 1000.0;
+                        _conn->publish(_mqttTopic + "/current_I", String(current, 3))
+                    }
+                    else if (key == "VPV") {
+                        float voltage = value.toInt() / 1000.0;
+                        _conn->publish(_mqttTopic + "/pv_voltage_V", String(voltage, 3))
+                    }
+                    else if (key == "PPV") {
+                        float power = value.toInt();
+                        _conn->publish(_mqttTopic + "/pv_power_W", String(power, 3))
+                    }
                 }
             }
-            _conn->debug("key: " + key + ", value: " + value);
+            // _conn->debug("key: " + key + ", value: " + value);
             key = "";
             value = "";
             separator_found = false;
