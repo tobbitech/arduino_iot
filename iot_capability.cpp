@@ -4,6 +4,7 @@
 #include "iot_capability.h"
 #include "mqttConnection.h"
 #include <HardwareSerial.h>
+#include <SoftwareSerial.h>
 
 
 OnOffSwitch::OnOffSwitch(Connection * conn_pointer, int pin, String name, String mqtt_topic, String on_value, String off_value)
@@ -499,7 +500,7 @@ void HANreader::parse_message() {
 }
 
 
-VEdirectReader::VEdirectReader(Connection * conn, String mqttTopic, uint8_t RXpin, uint8_t TXpin): serialVE(3)
+VEdirectReader::VEdirectReader(Connection * conn, String mqttTopic, uint8_t RXpin, uint8_t TXpin): serialVE(34, 13) //serialVE(3)
 {
     _RXpin = RXpin;
     _TXpin = TXpin;
@@ -508,7 +509,9 @@ VEdirectReader::VEdirectReader(Connection * conn, String mqttTopic, uint8_t RXpi
 }
 
 void VEdirectReader::begin() {
-    serialVE.begin(19200, SERIAL_8N1, _RXpin, _TXpin);
+    // serialVE.begin(19200, SERIAL_8N1, _RXpin, _TXpin); // for hardwareserial
+
+    serialVE.begin(19200);
     _last_byte_millis = 0;
     _message = "";
     _message_buf_pos = 0;
