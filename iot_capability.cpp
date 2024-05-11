@@ -568,19 +568,19 @@ void VEdirectReader::parse_message() {
                     
                     if (key == "V") {
                         float voltage = value.toInt() / 1000.0;
-                        _conn->publish(_mqttTopic + "/battery_voltage_V", String(voltage, 3));
+                        _conn->publish(_mqttTopic + "/battery_voltage_V", String(voltage, 2));
                     }
                     else if (key == "I") {
                         float current = value.toInt() / 1000.0;
-                        _conn->publish(_mqttTopic + "/current_I", String(current, 3));
+                        _conn->publish(_mqttTopic + "/current_I", String(current, 2));
                     }
                     else if (key == "VPV") {
                         float voltage = value.toInt() / 1000.0;
-                        _conn->publish(_mqttTopic + "/pv_voltage_V", String(voltage, 3));
+                        _conn->publish(_mqttTopic + "/pv_voltage_V", String(voltage, 2));
                     }
                     else if (key == "PPV") {
                         float power = value.toInt();
-                        _conn->publish(_mqttTopic + "/pv_power_W", String(power, 3));
+                        _conn->publish(_mqttTopic + "/pv_power_W", String(power, 0));
                     }
                 }
             }
