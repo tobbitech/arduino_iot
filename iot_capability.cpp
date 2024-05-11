@@ -531,7 +531,7 @@ void VEdirectReader::tick() {
         parse_message();
         _message = "";
         _message_buf_pos = 0;
-        Serial.println("---serial message end---");
+        // Serial.println("---serial message end---");
     }
 
     if ( serialVE.available() > 0 ) {
@@ -539,7 +539,7 @@ void VEdirectReader::tick() {
         _last_byte_millis = millis(); // reset timeout counter
         _message += recv_char;
         _message_buf[_message_buf_pos++] = recv_char;
-        Serial.print(recv_char);
+        // Serial.print(recv_char);
     }
 }
 
