@@ -509,11 +509,11 @@ VEdirectReader::VEdirectReader(Connection * conn, String mqttTopic, uint8_t RXpi
 }
 
 void VEdirectReader::begin() {
-    // serialVE.begin(19200, SERIAL_8N1, _RXpin, _TXpin); // for hardwareserial
+    serialVE.begin(19200, SERIAL_8N1, _RXpin, _TXpin); // for hardwareserial
 
     // serialVE.begin(19200);
     // testSerial.begin(BAUD_RATE, EspSoftwareSerial::SWSERIAL_8N1, D7, D8, false, 95, 11);
-    serialVE.begin(19200, EspSoftwareSerial::SWSERIAL_8N1, _RXpin, _TXpin);
+    // serialVE.begin(19200, EspSoftwareSerial::SWSERIAL_8N1, _RXpin, _TXpin);
     _last_byte_millis = 0;
     _message = "";
     _message_buf_pos = 0;
@@ -531,7 +531,7 @@ void VEdirectReader::tick() {
         parse_message();
         _message = "";
         _message_buf_pos = 0;
-        Serial.println();
+        Serial.println("---serial message end---");
     }
 
     if ( serialVE.available() > 0 ) {

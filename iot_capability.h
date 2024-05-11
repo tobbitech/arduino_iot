@@ -143,9 +143,9 @@ class VEdirectReader {
         void begin();
         void end();
         void tick();
-        // HardwareSerial serialVE;
+        HardwareSerial serialVE;
         // SoftwareSerial serialVE;
-        EspSoftwareSerial::UART serialVE;
+        // EspSoftwareSerial::UART serialVE;
         void parse_message();
 
     private:
