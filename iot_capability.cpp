@@ -509,7 +509,8 @@ VEdirectReader::VEdirectReader(Connection * conn, String mqttTopic, uint8_t RXpi
 
 void VEdirectReader::begin() {
     serialVE.begin(19200, SERIAL_8N1, _RXpin, _TXpin); // for hardwareserial
-    send_raw_data_timer.set(100, "seconds");
+    _send_raw_data_timer.set(100, "seconds");
+    set_publish_timer_s(5);
     _last_byte_millis = 0;
     _message = "";
     _message_buf_pos = 0;
@@ -537,8 +538,12 @@ void VEdirectReader::tick() {
     }
 }
 
+void VEdirectReader::set_publish_timer_s(u_int16_t seconds) {
+    _publish_data_timer.set(seconds, "seconds");
+}
+
 void VEdirectReader::parse_message() {
-    if( send_raw_data_timer.is_done() ) {
+    if( _send_raw_data_timer.is_done() ) {
         _conn->publish(_mqttTopic + "/VEdirect/raw", _message);
     }
 
@@ -549,33 +554,35 @@ void VEdirectReader::parse_message() {
 
     for (int i = 0; i < _message_buf_pos; i++) {
         if ( _message[i] == '\n') {
-            if (key == "V") {
-                float voltage = value.toInt() / 1000.0;
-                _conn->publish(_mqttTopic + "/battery_voltage_V", String(voltage, 2));
-                float soc_by_v = (0.09369*0.09369*voltage - 87.69*voltage + 2050);
-                if (soc_by_v > 100 ) { soc_by_v = 100; }
-                //trollslottetBatterySOCbyV.sendCommand((0.009369*Math.pow(x,2) - 0.8769*x + 20.5)*100);
-//88.69*Math.pow(x,6) - 151.5*Math.pow(x,5) - 21.37*Math.pow(x,4) + 179.9*Math.pow(x,3) - 125.7*Math.pow(x,2) + 39.33*x + 48);
-            }
-            else if (key == "I") {
-                float current = value.toInt() / 1000.0;
-                _conn->publish(_mqttTopic + "/current_I", String(current, 2));
-            }
-            else if (key == "P") {
-                float power = value.toInt();
-                _conn->publish(_mqttTopic + "/power_W", String(power, 0));
-            }
-            else if (key == "SOC") {
-                float soc = value.toInt() / 10;
-                _conn->publish(_mqttTopic + "/soc_%", String(soc, 1));
-            }
-            else if (key == "VPV") {
-                float voltage = value.toInt() / 1000.0;
-                _conn->publish(_mqttTopic + "/pv_voltage_V", String(voltage, 2));
-            }
-            else if (key == "PPV") {
-                float power = value.toInt();
-                _conn->publish(_mqttTopic + "/pv_power_W", String(power, 0));
+            if ( _publish_data_timer-is_done() ) {
+                if (key == "V") {
+                    float voltage = value.toInt() / 1000.0;
+                    _conn->publish(_mqttTopic + "/battery_voltage_V", String(voltage, 2));
+                    float soc_by_v = (0.09369*0.09369*voltage - 87.69*voltage + 2050);
+                    if (soc_by_v > 100 ) { soc_by_v = 100; }
+                    //trollslottetBatterySOCbyV.sendCommand((0.009369*Math.pow(x,2) - 0.8769*x + 20.5)*100);
+    //88.69*Math.pow(x,6) - 151.5*Math.pow(x,5) - 21.37*Math.pow(x,4) + 179.9*Math.pow(x,3) - 125.7*Math.pow(x,2) + 39.33*x + 48);
+                }
+                else if (key == "I") {
+                    float current = value.toInt() / 1000.0;
+                    _conn->publish(_mqttTopic + "/current_I", String(current, 2));
+                }
+                else if (key == "P") {
+                    float power = value.toInt();
+                    _conn->publish(_mqttTopic + "/power_W", String(power, 0));
+                }
+                else if (key == "SOC") {
+                    float soc = value.toInt() / 10;
+                    _conn->publish(_mqttTopic + "/soc_%", String(soc, 1));
+                }
+                else if (key == "VPV") {
+                    float voltage = value.toInt() / 1000.0;
+                    _conn->publish(_mqttTopic + "/pv_voltage_V", String(voltage, 2));
+                }
+                else if (key == "PPV") {
+                    float power = value.toInt();
+                    _conn->publish(_mqttTopic + "/pv_power_W", String(power, 0));
+                }
             }
             key = "";
             value = "";

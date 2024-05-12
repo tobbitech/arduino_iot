@@ -145,6 +145,7 @@ class VEdirectReader {
         void tick();
         HardwareSerial serialVE;
         void parse_message();
+        void set_publish_timer_s(u_int16_t seconds);
 
     private:
         Connection * _conn;
@@ -159,7 +160,8 @@ class VEdirectReader {
         uint16_t _message_buf_pos;
         void _receive_char();
         uint32_t _last_byte_millis;
-        Timer send_raw_data_timer;
+        Timer _send_raw_data_timer;
+        Timer _publish_data_timer;
 };
 
 #endif
