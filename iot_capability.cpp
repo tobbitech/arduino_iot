@@ -592,7 +592,7 @@ void VEdirectReader::parse_message() {
         if ( _message[i] == '\n') {
             if (key == "V") {
                 _voltage_V = value.toInt() / 1000.0;
-                _soc_by_v = (0.09369*0.09369*_voltage_V - 87.69*_voltage_V + 2050);
+                _soc_by_v = (0.9369*_voltage_V*_voltage_V - 87.69*_voltage_V + 2050);
                 if (_soc_by_v > 100 ) { _soc_by_v = 100; }
                 _voltage_is_set = true;
                 //trollslottetBatterySOCbyV.sendCommand((0.009369*Math.pow(x,2) - 0.8769*x + 20.5)*100);
