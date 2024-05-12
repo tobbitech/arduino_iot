@@ -554,7 +554,7 @@ void VEdirectReader::parse_message() {
 
     for (int i = 0; i < _message_buf_pos; i++) {
         if ( _message[i] == '\n') {
-            if ( _publish_data_timer.is_done() ) {
+            // if ( _publish_data_timer.is_done() ) {
                 if (key == "V") {
                     float voltage = value.toInt() / 1000.0;
                     _conn->publish(_mqttTopic + "/battery_voltage_V", String(voltage, 2));
@@ -583,7 +583,7 @@ void VEdirectReader::parse_message() {
                     float power = value.toInt();
                     _conn->publish(_mqttTopic + "/pv_power_W", String(power, 0));
                 }
-            }
+            // }
             key = "";
             value = "";
             separator_found = false;
