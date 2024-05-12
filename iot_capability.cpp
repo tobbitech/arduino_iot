@@ -591,31 +591,31 @@ void VEdirectReader::parse_message() {
     for (int i = 0; i < _message_buf_pos; i++) {
         if ( _message[i] == '\n') {
             if (key == "V") {
-                float _voltage_V = value.toInt() / 1000.0;
-                float _soc_by_v = (0.09369*0.09369*_voltage_V - 87.69*_voltage_V + 2050);
+                _voltage_V = value.toInt() / 1000.0;
+                _soc_by_v = (0.09369*0.09369*_voltage_V - 87.69*_voltage_V + 2050);
                 if (_soc_by_v > 100 ) { _soc_by_v = 100; }
                 _voltage_is_set = true;
                 //trollslottetBatterySOCbyV.sendCommand((0.009369*Math.pow(x,2) - 0.8769*x + 20.5)*100);
 //88.69*Math.pow(x,6) - 151.5*Math.pow(x,5) - 21.37*Math.pow(x,4) + 179.9*Math.pow(x,3) - 125.7*Math.pow(x,2) + 39.33*x + 48);
             }
             else if (key == "I") {
-                float _current_A = value.toInt() / 1000.0;
+                _current_A = value.toInt() / 1000.0;
                 _current_is_set = true;
             }
             else if (key == "P") {
-                float _power_W = value.toInt();
+                _power_W = value.toInt();
                 _power_is_set = true;
             }
             else if (key == "SOC") {
-                float _soc = value.toInt() / 10;
+                _soc = value.toInt() / 10;
                 _soc_is_set = true;
             }
             else if (key == "VPV") {
-                float _pv_voltage_V = value.toInt() / 1000.0;
+                _pv_voltage_V = value.toInt() / 1000.0;
                 _pv_voltage_is_set = true;
             }
             else if (key == "PPV") {
-                float _pv_power_W = value.toInt();
+                _pv_power_W = value.toInt();
                 _pv_power_is_set = true;
             }
             key = "";
