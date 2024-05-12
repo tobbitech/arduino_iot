@@ -146,6 +146,7 @@ class VEdirectReader {
         HardwareSerial serialVE;
         void parse_message();
         void set_publish_timer_s(u_int16_t seconds);
+        void publish_data();
 
     private:
         Connection * _conn;
@@ -162,6 +163,19 @@ class VEdirectReader {
         uint32_t _last_byte_millis;
         Timer _send_raw_data_timer;
         Timer _publish_data_timer;
+        float _voltage_V;
+        float _current_A;
+        float _power_W;
+        float _soc;
+        float _soc_by_v;
+        float _pv_voltage_V;
+        float _pv_power_W;
+        bool _voltage_is_set;
+        bool _current_is_set;
+        bool _power_is_set;
+        bool _soc_is_set;
+        bool _pv_voltage_is_set;
+        bool _pv_power_is_set;
 };
 
 #endif

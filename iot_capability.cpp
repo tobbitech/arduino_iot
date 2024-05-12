@@ -514,6 +514,20 @@ void VEdirectReader::begin() {
     _last_byte_millis = 0;
     _message = "";
     _message_buf_pos = 0;
+    _voltage_V = 0;
+    _current_A = 0;
+    _power_W = 0;
+    _soc = 0;
+    _soc_by_v = 0;
+    _pv_voltage_V = 0;
+    _pv_power_W = 0;
+    _voltage_is_set = false;
+    _current_is_set = false;
+    _power_is_set = false;
+    _soc_is_set = false;
+    _pv_voltage_is_set = false;
+    _pv_power_is_set = false;
+    
 }
 
 void VEdirectReader::end() {
@@ -542,6 +556,31 @@ void VEdirectReader::set_publish_timer_s(u_int16_t seconds) {
     _publish_data_timer.set(seconds, "seconds");
 }
 
+void VEdirectReader::publish_data() {
+    if ( _publish_data_timer.is_done() ) {
+        if (_voltage_is_set) {
+            _conn->publish(_mqttTopic + "/battery_voltage_V", String(_voltage_V, 2));
+            _conn->publish(_mqttTopic + "/soc_by_v", String(_soc_by_v, 1));
+        }
+        if (_current_is_set) {
+            _conn->publish(_mqttTopic + "/current_I", String(_current_A, 2));
+        }
+        if (_power_is_set) {
+            _conn->publish(_mqttTopic + "/power_W", String(_power_W, 0));
+        }
+        if (_soc_is_set) {
+            _conn->publish(_mqttTopic + "/soc_%", String(_soc, 1));
+        }
+        if (_pv_voltage_is_set) {
+            _conn->publish(_mqttTopic + "/pv_voltage_V", String(_pv_voltage_V, 2));
+        }
+        if (_pv_power_is_set) {
+            _conn->publish(_mqttTopic + "/pv_power_W", String(_pv_power_W, 0));
+        }
+    }
+
+}
+
 void VEdirectReader::parse_message() {
     if( _send_raw_data_timer.is_done() ) {
         _conn->publish(_mqttTopic + "/VEdirect/raw", _message);
@@ -554,36 +593,34 @@ void VEdirectReader::parse_message() {
 
     for (int i = 0; i < _message_buf_pos; i++) {
         if ( _message[i] == '\n') {
-            // if ( _publish_data_timer.is_done() ) {
-                if (key == "V") {
-                    float voltage = value.toInt() / 1000.0;
-                    _conn->publish(_mqttTopic + "/battery_voltage_V", String(voltage, 2));
-                    float soc_by_v = (0.09369*0.09369*voltage - 87.69*voltage + 2050);
-                    if (soc_by_v > 100 ) { soc_by_v = 100; }
-                    //trollslottetBatterySOCbyV.sendCommand((0.009369*Math.pow(x,2) - 0.8769*x + 20.5)*100);
-    //88.69*Math.pow(x,6) - 151.5*Math.pow(x,5) - 21.37*Math.pow(x,4) + 179.9*Math.pow(x,3) - 125.7*Math.pow(x,2) + 39.33*x + 48);
-                }
-                else if (key == "I") {
-                    float current = value.toInt() / 1000.0;
-                    _conn->publish(_mqttTopic + "/current_I", String(current, 2));
-                }
-                else if (key == "P") {
-                    float power = value.toInt();
-                    _conn->publish(_mqttTopic + "/power_W", String(power, 0));
-                }
-                else if (key == "SOC") {
-                    float soc = value.toInt() / 10;
-                    _conn->publish(_mqttTopic + "/soc_%", String(soc, 1));
-                }
-                else if (key == "VPV") {
-                    float voltage = value.toInt() / 1000.0;
-                    _conn->publish(_mqttTopic + "/pv_voltage_V", String(voltage, 2));
-                }
-                else if (key == "PPV") {
-                    float power = value.toInt();
-                    _conn->publish(_mqttTopic + "/pv_power_W", String(power, 0));
-                }
-            // }
+            if (key == "V") {
+                float _voltage_V = value.toInt() / 1000.0;
+                float _soc_by_v = (0.09369*0.09369*_voltage_V - 87.69*_voltage_V + 2050);
+                if (_soc_by_v > 100 ) { _soc_by_v = 100; }
+                _voltage_is_set = true;
+                //trollslottetBatterySOCbyV.sendCommand((0.009369*Math.pow(x,2) - 0.8769*x + 20.5)*100);
+//88.69*Math.pow(x,6) - 151.5*Math.pow(x,5) - 21.37*Math.pow(x,4) + 179.9*Math.pow(x,3) - 125.7*Math.pow(x,2) + 39.33*x + 48);
+            }
+            else if (key == "I") {
+                float _current_A = value.toInt() / 1000.0;
+                _current_is_set = true;
+            }
+            else if (key == "P") {
+                float _power_W = value.toInt();
+                _power_is_set = true;
+            }
+            else if (key == "SOC") {
+                float _soc = value.toInt() / 10;
+                _soc_is_set = true;
+            }
+            else if (key == "VPV") {
+                float _pv_voltage_V = value.toInt() / 1000.0;
+                _pv_voltage_is_set = true;
+            }
+            else if (key == "PPV") {
+                float _pv_power_W = value.toInt();
+                _pv_power_is_set = true;
+            }
             key = "";
             value = "";
             separator_found = false;
