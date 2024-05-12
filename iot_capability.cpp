@@ -557,28 +557,25 @@ void VEdirectReader::set_publish_timer_s(u_int16_t seconds) {
 }
 
 void VEdirectReader::publish_data() {
-    if ( _publish_data_timer.is_done() ) {
-        if (_voltage_is_set) {
-            _conn->publish(_mqttTopic + "/battery_voltage_V", String(_voltage_V, 2));
-            _conn->publish(_mqttTopic + "/soc_by_v", String(_soc_by_v, 1));
-        }
-        if (_current_is_set) {
-            _conn->publish(_mqttTopic + "/current_I", String(_current_A, 2));
-        }
-        if (_power_is_set) {
-            _conn->publish(_mqttTopic + "/power_W", String(_power_W, 0));
-        }
-        if (_soc_is_set) {
-            _conn->publish(_mqttTopic + "/soc_%", String(_soc, 1));
-        }
-        if (_pv_voltage_is_set) {
-            _conn->publish(_mqttTopic + "/pv_voltage_V", String(_pv_voltage_V, 2));
-        }
-        if (_pv_power_is_set) {
-            _conn->publish(_mqttTopic + "/pv_power_W", String(_pv_power_W, 0));
-        }
+    if (_voltage_is_set) {
+        _conn->publish(_mqttTopic + "/battery_voltage_V", String(_voltage_V, 2));
+        _conn->publish(_mqttTopic + "/soc_by_v", String(_soc_by_v, 1));
     }
-
+    if (_current_is_set) {
+        _conn->publish(_mqttTopic + "/current_I", String(_current_A, 2));
+    }
+    if (_power_is_set) {
+        _conn->publish(_mqttTopic + "/power_W", String(_power_W, 0));
+    }
+    if (_soc_is_set) {
+        _conn->publish(_mqttTopic + "/soc_%", String(_soc, 1));
+    }
+    if (_pv_voltage_is_set) {
+        _conn->publish(_mqttTopic + "/pv_voltage_V", String(_pv_voltage_V, 2));
+    }
+    if (_pv_power_is_set) {
+        _conn->publish(_mqttTopic + "/pv_power_W", String(_pv_power_W, 0));
+    }
 }
 
 void VEdirectReader::parse_message() {
