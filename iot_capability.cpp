@@ -4,7 +4,6 @@
 #include "iot_capability.h"
 #include "mqttConnection.h"
 #include <HardwareSerial.h>
-#include <SoftwareSerial.h>
 
 
 OnOffSwitch::OnOffSwitch(Connection * conn_pointer, int pin, String name, String mqtt_topic, String on_value, String off_value)
@@ -511,15 +510,6 @@ VEdirectReader::VEdirectReader(Connection * conn, String mqttTopic, uint8_t RXpi
 void VEdirectReader::begin() {
     serialVE.begin(19200, SERIAL_8N1, _RXpin, _TXpin); // for hardwareserial
     send_raw_data_timer.set(100, "seconds");
-    _keys_to_parse[0] = "V";
-    _keys_to_parse[1] = "I";
-    _keys_to_parse[2] = "VPV";
-    _keys_to_parse[3] = "PPV";
-    _len_keys_to_parse = 4;
-
-    // serialVE.begin(19200);
-    // testSerial.begin(BAUD_RATE, EspSoftwareSerial::SWSERIAL_8N1, D7, D8, false, 95, 11);
-    // serialVE.begin(19200, EspSoftwareSerial::SWSERIAL_8N1, _RXpin, _TXpin);
     _last_byte_millis = 0;
     _message = "";
     _message_buf_pos = 0;
@@ -537,7 +527,6 @@ void VEdirectReader::tick() {
         parse_message();
         _message = "";
         _message_buf_pos = 0;
-        // Serial.println("---serial message end---");
     }
 
     if ( serialVE.available() > 0 ) {
@@ -545,7 +534,6 @@ void VEdirectReader::tick() {
         _last_byte_millis = millis(); // reset timeout counter
         _message += recv_char;
         _message_buf[_message_buf_pos++] = recv_char;
-        // Serial.print(recv_char);
     }
 }
 
@@ -561,30 +549,34 @@ void VEdirectReader::parse_message() {
 
     for (int i = 0; i < _message_buf_pos; i++) {
         if ( _message[i] == '\n') {
-            // data field end:
-            for (int j = 0; j < _len_keys_to_parse; j++) {
-                if (key == _keys_to_parse[j]) {
-                    _conn->publish(_mqttTopic + "/parsed_data/" + key, value);
-                    
-                    if (key == "V") {
-                        float voltage = value.toInt() / 1000.0;
-                        _conn->publish(_mqttTopic + "/battery_voltage_V", String(voltage, 2));
-                    }
-                    else if (key == "I") {
-                        float current = value.toInt() / 1000.0;
-                        _conn->publish(_mqttTopic + "/current_I", String(current, 2));
-                    }
-                    else if (key == "VPV") {
-                        float voltage = value.toInt() / 1000.0;
-                        _conn->publish(_mqttTopic + "/pv_voltage_V", String(voltage, 2));
-                    }
-                    else if (key == "PPV") {
-                        float power = value.toInt();
-                        _conn->publish(_mqttTopic + "/pv_power_W", String(power, 0));
-                    }
-                }
+            if (key == "V") {
+                float voltage = value.toInt() / 1000.0;
+                _conn->publish(_mqttTopic + "/battery_voltage_V", String(voltage, 2));
+                float soc_by_v = (0.09369*0.09369*voltage - 87.69*voltage + 2050);
+                if (soc_by_v > 100 ) { soc_by_v = 100; }
+                //trollslottetBatterySOCbyV.sendCommand((0.009369*Math.pow(x,2) - 0.8769*x + 20.5)*100);
+//88.69*Math.pow(x,6) - 151.5*Math.pow(x,5) - 21.37*Math.pow(x,4) + 179.9*Math.pow(x,3) - 125.7*Math.pow(x,2) + 39.33*x + 48);
             }
-            // _conn->debug("key: " + key + ", value: " + value);
+            else if (key == "I") {
+                float current = value.toInt() / 1000.0;
+                _conn->publish(_mqttTopic + "/current_I", String(current, 2));
+            }
+            else if (key == "P") {
+                float power = value.toInt();
+                _conn->publish(_mqttTopic + "/power_W", String(power, 0));
+            }
+            else if (key == "SOC") {
+                float soc = value.toInt() / 10;
+                _conn->publish(_mqttTopic + "/soc_%", String(soc, 1));
+            }
+            else if (key == "VPV") {
+                float voltage = value.toInt() / 1000.0;
+                _conn->publish(_mqttTopic + "/pv_voltage_V", String(voltage, 2));
+            }
+            else if (key == "PPV") {
+                float power = value.toInt();
+                _conn->publish(_mqttTopic + "/pv_power_W", String(power, 0));
+            }
             key = "";
             value = "";
             separator_found = false;
@@ -600,7 +592,5 @@ void VEdirectReader::parse_message() {
         else {
             value += _message[i];
         }
-
-
     }
 }

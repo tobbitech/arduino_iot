@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 #include "mqttConnection.h"
-#include <SoftwareSerial.h>
 
 class OnOffSwitch
 {
@@ -145,8 +144,6 @@ class VEdirectReader {
         void end();
         void tick();
         HardwareSerial serialVE;
-        // SoftwareSerial serialVE;
-        // EspSoftwareSerial::UART serialVE;
         void parse_message();
 
     private:
@@ -162,10 +159,7 @@ class VEdirectReader {
         uint16_t _message_buf_pos;
         void _receive_char();
         uint32_t _last_byte_millis;
-        // bool _match_sequence(uint16_t);
         Timer send_raw_data_timer;
-        String _keys_to_parse[VEDIRECT_NUMBER_KEYS_TO_PARSE];
-        size_t _len_keys_to_parse;
 };
 
 #endif
