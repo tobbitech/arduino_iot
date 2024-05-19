@@ -246,7 +246,7 @@ bool InputMomentary::check() {
     if (state != _last_state) {
         _last_state = state;
         String debug_text = "Momentary input " + _name + " changed to: " + String(state);
-        if( _mode == INPUT_MOMENTARY_ANALOG) { debug_text += " with value " + String(value); }
+        if( _mode == INPUT_MOMENTARY_ANALOG) { debug_text += " with value " + String(read_value); }
         _conn_pointer->debug(debug_text);
         String output_value = _on_value;
         if (state == false && (_timer_is_set == false || _off_timer.is_done()) ) { 
