@@ -638,23 +638,23 @@ void VEdirectReader::parse_message() {
                 _pv_power_W = value.toInt();
                 _pv_power_is_set = true;
             }
-            else if (key = "H19") {
+            else if (key == "H19") {
                 _yield_total_kWh = value.toInt() / 100.0;
                 _yield_total_is_set = true;
             }
-            else if (key = "H20") {
+            else if (key == "H20") {
                 _yield_today_kWh = value.toInt() / 100.0;
                 _yield_today_is_set = true;
             }
-            else if (key = "H21") {
+            else if (key == "H21") {
                 _max_power_today_W = value.toInt();
                 _max_power_today_is_set = true;
             }
-            else if (key = "H22") {
+            else if (key == "H22") {
                 _yield_yesterday_kWh = value.toInt() / 100.0;
                 _yield_yesterday_is_set = true;
             }
-            else if (key = "H23") {
+            else if (key == "H23") {
                 _max_power_yesterday_W = value.toInt();
                 _max_power_yesterday_is_set = true;
             }
