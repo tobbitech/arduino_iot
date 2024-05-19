@@ -594,7 +594,7 @@ void VEdirectReader::publish_data() {
         _conn->publish(_mqttTopic + "/yield_yesterday_kWh", String(_yield_yesterday_kWh, 2));
     }
     if (_max_power_yesterday_is_set) {
-        _conn->publish(_mqttTopic + "/max_power_yesterday_kWh", String(_max_power_yesterday_W, 0));
+        _conn->publish(_mqttTopic + "/max_power_yesterday_W", String(_max_power_yesterday_W, 0));
     }
 }
 
