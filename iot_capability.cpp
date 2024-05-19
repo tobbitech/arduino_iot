@@ -529,7 +529,7 @@ void VEdirectReader::begin() {
     _pv_power_is_set = false;
     _yield_total_is_set = false;
     _yield_today_is_set = false;
-    _max_power_today_is_Set = false;
+    _max_power_today_is_set = false;
     _yield_yesterday_is_set = false;
     _max_power_yesterday_is_set = false;
     
@@ -582,7 +582,7 @@ void VEdirectReader::publish_data() {
         _conn->publish(_mqttTopic + "/pv_power_W", String(_pv_power_W, 0));
     }
     if (_yield_total_is_set) {
-        _conn->publish(_mqttTopic + "/yield_total_kWh", String(_, 0));
+        _conn->publish(_mqttTopic + "/yield_total_kWh", String(_yield_total_kWh, 0));
     }
     if (_yield_today_is_set) {
         _conn->publish(_mqttTopic + "/yield_today_kWh", String(_yield_today_kWh, 0));
