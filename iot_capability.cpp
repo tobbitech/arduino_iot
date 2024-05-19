@@ -261,7 +261,7 @@ void InputMomentary::set_threshold_voltage(float new_threshold_voltage) {
 void InputMomentary::set_off_timer(Timer off_timer) {
     _timer_is_set = true;
     _off_timer = off_timer;
-    _conn_pointer->debug("Off timer set on " + name + " for " + _off_timer.get_set_time() );
+    _conn_pointer->debug("Off timer set on " + _name + " for " + _off_timer.get_set_time() );
 }
 
 
