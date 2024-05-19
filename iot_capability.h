@@ -25,6 +25,7 @@ class OnOffSwitch
     private:
         Connection * _conn_pointer;
         int _pin;
+        bool _last_state;
         String _name;
         String _mqtt_topic;
         String _mac_address;

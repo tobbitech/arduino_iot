@@ -37,6 +37,7 @@ String OnOffSwitch::getName() {
 void OnOffSwitch::turnOn(bool updateOnOffTopic)
 {
     digitalWrite(_pin, HIGH);
+    _last_state = true;
     if (updateOnOffTopic) { _conn_pointer->publish(_mqtt_topic, _on_value); }
     (*_conn_pointer).debug("OnOffSwitch " + _name + " turned ON");
     _conn_pointer->maintain();
@@ -46,6 +47,7 @@ void OnOffSwitch::turnOn(bool updateOnOffTopic)
 void OnOffSwitch::turnOff(bool updateOnOffTopic)
 {
     digitalWrite(_pin, LOW);
+    _last_state = false;
     if (updateOnOffTopic) { _conn_pointer->publish(_mqtt_topic, _off_value); }
     (*_conn_pointer).debug("OnOffSwitch " + _name + " turned OFF");
     _conn_pointer->maintain();
@@ -64,10 +66,10 @@ void OnOffSwitch::toggle(bool updateOnOffTopic)
 
 void OnOffSwitch::setSwitchState(String on_off_value, bool updateOnOffTopic)
 {
-    if (on_off_value == _on_value) {
+    if (on_off_value == _on_value && _last_state == false) {
         OnOffSwitch::turnOn(updateOnOffTopic);
     }
-    else if (on_off_value == _off_value)
+    else if (on_off_value == _off_value && _last_state == true)
     {
         OnOffSwitch::turnOff(updateOnOffTopic);
     }
@@ -80,9 +82,10 @@ void OnOffSwitch::setSwitchState(String on_off_value, bool updateOnOffTopic)
 
 void OnOffSwitch::setSwitchState(bool state, bool updateOnOffTopic)
 {
-    if ( state ) {
+    if ( state == true && _last_state == false ) {
         OnOffSwitch::turnOn(updateOnOffTopic);
-    } else {
+    } 
+    else if ( state == false && _last_state == true ) {
         OnOffSwitch::turnOff(updateOnOffTopic);
     }
 }
