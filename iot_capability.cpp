@@ -202,6 +202,7 @@ InputMomentary::InputMomentary(
 
 void InputMomentary::begin() {
     // pinMode must be set elsewhere
+    _timer_is_set = false;
     
 
 }
@@ -236,7 +237,7 @@ void InputMomentary::check() {
         if( _mode == INPUT_MOMENTARY_ANALOG) { debug_text += " with value " + String(value); }
         _conn_pointer->debug(debug_text);
         String value = _on_value;
-        if (state == false) { value = _off_value;}
+        if (state == false && (_timer_is_set == false || _off_timer.is_done()) ) { value = _off_value;}
         _conn_pointer->publish(_mqtt_topic, value);
     }
 
@@ -245,6 +246,12 @@ void InputMomentary::check() {
 
 void InputMomentary::set_threshold_voltage(float new_threshold_voltage) {
     _threshold_voltage = new_threshold_voltage;
+}
+
+void InputMomentary::set_off_timer(Timer off_timer) {
+    _timer_is_set = true;
+    _off_timer = off_timer;
+    _conn_pointer->debug("Off timer set on " + name + " for " + _off_timer.get_set_time() );
 }
 
 

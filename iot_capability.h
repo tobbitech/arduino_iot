@@ -77,6 +77,8 @@ class InputMomentary
         void begin();
         void check();
         void set_threshold_voltage(float voltage);
+        void set_off_timer(Timer off_timer);
+
 
 
 
@@ -90,6 +92,9 @@ class InputMomentary
         float _threshold_voltage;
         uint8_t _mode;
         bool _last_state;
+        bool _timer_is_set;
+        Timer _off_timer;
+
 
 
         
