@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 #include "mqttConnection.h"
-#include <SoftwareSerial.h>
 
 class OnOffSwitch
 {
@@ -137,6 +136,7 @@ class HANreader {
 
 #define VEDIRECT_TIMEOUT_MS 100
 #define VEDIRECT_MESSAGE_SIZE 2000
+#define VEDIRECT_NUMBER_KEYS_TO_PARSE 20
 class VEdirectReader {
     public:
         VEdirectReader(Connection *conn, String mqttTopic, u_int8_t RXpin, u_int8_t TXpin);
@@ -144,9 +144,9 @@ class VEdirectReader {
         void end();
         void tick();
         HardwareSerial serialVE;
-        // SoftwareSerial serialVE;
-        // EspSoftwareSerial::UART serialVE;
         void parse_message();
+        void set_publish_timer_s(u_int16_t seconds);
+        void publish_data();
 
     private:
         Connection * _conn;
@@ -161,7 +161,31 @@ class VEdirectReader {
         uint16_t _message_buf_pos;
         void _receive_char();
         uint32_t _last_byte_millis;
-        // bool _match_sequence(uint16_t);
+        Timer _send_raw_data_timer;
+        Timer _publish_data_timer;
+        float _voltage_V;
+        float _current_A;
+        float _power_W;
+        float _soc;
+        float _soc_by_v;
+        float _pv_voltage_V;
+        float _pv_power_W;
+        float _yield_total_kWh;
+        float _yield_today_kWh;
+        float _max_power_today_W;
+        float _yield_yesterday_kWh;
+        float _max_power_yesterday_W;
+        bool _voltage_is_set;
+        bool _current_is_set;
+        bool _power_is_set;
+        bool _soc_is_set;
+        bool _pv_voltage_is_set;
+        bool _pv_power_is_set;
+        bool _yield_total_is_set;
+        bool _yield_today_is_set;
+        bool _max_power_today_is_set;
+        bool _yield_yesterday_is_set;
+        bool _max_power_yesterday_is_set;
 };
 
 #endif
