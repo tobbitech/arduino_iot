@@ -17,6 +17,7 @@ class OnOffSwitch
         void turnOff(bool updateOnOfTopic = false);
         void toggle(bool updateOnOfTopic = false);
         void setSwitchState(String on_off_value, bool updateOnOfTopic = false);
+        void setSwitchState(bool state, bool updateOnOfTopic = false);
         String getOnValue();
         String getOffValue();
 
@@ -75,7 +76,7 @@ class InputMomentary
                 String off_value = "false"
         );
         void begin();
-        void check();
+        bool check();
         void set_threshold_voltage(float voltage);
         void set_off_timer(Timer off_timer);
 

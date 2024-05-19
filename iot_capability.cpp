@@ -78,6 +78,15 @@ void OnOffSwitch::setSwitchState(String on_off_value, bool updateOnOffTopic)
     }
 }
 
+void OnOffSwitch::setSwitchState(bool state, bool updateOnOffTopic)
+{
+    if ( state ) {
+        OnOffSwitch::turnOn(updateOnOffTopic);
+    } else {
+        OnOffSwitch::turnOff(updateOnOffTopic);
+    }
+}
+
 String OnOffSwitch::getOnValue()
 {
     return(_on_value);
@@ -207,7 +216,7 @@ void InputMomentary::begin() {
 
 }
 
-void InputMomentary::check() {
+bool InputMomentary::check() {
     // to be run as often as possible
     int16_t value;
     bool state = false;
@@ -241,6 +250,7 @@ void InputMomentary::check() {
         _conn_pointer->publish(_mqtt_topic, value);
     }
 
+    return(state);
 }
 
 
