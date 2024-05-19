@@ -22,7 +22,7 @@ void OnOffSwitch::begin() {
     (*_conn_pointer).subscribeMqttTopic(_mqtt_topic);
     (*_conn_pointer).debug("OnOffSwitch " + _name + " created on topic " + _mqtt_topic);
     (*_conn_pointer).maintain();
-    _conn_pointer->debug("Using '->' to call member function from pointer to object");
+    //_conn_pointer->debug("Using '->' to call member function from pointer to object");
     
 }
 
@@ -187,7 +187,7 @@ void DS18B20_temperature_sensors::publishAllTemperatures()
     for (int i = 0; i < _numberOfDevices; i++) {
         String deviceMqttTopic = _mqtt_main_topic + "/" + _deviceNames[i];
         _conn_pointer->publish(deviceMqttTopic, String(_sensors.getTempC(_deviceAddresses[i])));
-        _conn_pointer->debug(_deviceNames[i] + ": " + _sensors.getTempC(_deviceAddresses[i]) + "C");
+        // _conn_pointer->debug(_deviceNames[i] + ": " + _sensors.getTempC(_deviceAddresses[i]) + "C");
     }
 }   
 
