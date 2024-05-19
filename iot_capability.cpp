@@ -221,23 +221,23 @@ void InputMomentary::begin() {
 
 bool InputMomentary::check() {
     // to be run as often as possible
-    int16_t value;
+    int16_t read_value;
     bool state = false;
     if (_mode == INPUT_MOMENTARY_ANALOG) {
-        value = analogRead(_pin);
+        read_value = analogRead(_pin);
         uint16_t threshold = round(4096 / 3.3) * _threshold_voltage;
-        if (value > threshold) {
+        if (read_value > threshold) {
             state = true;
         }
     } else {
-        value = digitalRead(_pin);
+        read_value = digitalRead(_pin);
         if (_mode == INPUT_MOMENTARY_HIGH_ON) {
-            if (value > 0) {
+            if (read_value > 0) {
                 state = true;
             }
         }
         if (_mode == INPUT_MOMENTARY_LOW_ON) {
-            if (value == 0) {
+            if (read_value == 0) {
                 state = true;
             }
         } 
@@ -248,9 +248,12 @@ bool InputMomentary::check() {
         String debug_text = "Momentary input " + _name + " changed to: " + String(state);
         if( _mode == INPUT_MOMENTARY_ANALOG) { debug_text += " with value " + String(value); }
         _conn_pointer->debug(debug_text);
-        String value = _on_value;
-        if (state == false && (_timer_is_set == false || _off_timer.is_done()) ) { value = _off_value;}
-        _conn_pointer->publish(_mqtt_topic, value);
+        String output_value = _on_value;
+        if (state == false && (_timer_is_set == false || _off_timer.is_done()) ) { 
+            output_value = _off_value;
+        }
+        _conn_pointer->publish(_mqtt_topic, output_value);
+        return(state);
     }
 
     return(state);
