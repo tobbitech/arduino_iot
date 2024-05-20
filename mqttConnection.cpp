@@ -281,9 +281,11 @@ void Connection::connect(
     _mqttClient.setServer(_host.c_str(), _port );
     if (_useSSL) {
         _mqttClient.setClient(_wifiSecureClient);
+        Serial.println("Connecting using SSL");
     }
     else {
         _mqttClient.setClient(_wifiClient);
+        Serial.println("Connecting without SSL");
     }
 
     _mqttClient.setCallback(callback);
