@@ -248,7 +248,8 @@ void Connection::connect(
     uint16_t mqttPort=1883, 
     String mqttClientName="MqttClient", 
     int wifiLedPin=4, 
-    int mqttLedPin=5
+    int mqttLedPin=5,
+    bool useSSL = false
     )
 {
     // set private variables
@@ -263,13 +264,31 @@ void Connection::connect(
     _sslRootCa = sslRootCa;
     _sslCert = sslCert;
     _sslKey = sslKey;
+    _useSSL = useSSL;
     
+    // #ifdef ARDUINO_IOT_USE_SSL
+    // #endif
+
+    if (_useSSL) {
+        Serial.println("Setting CA cert (using SSL)");
+        _wifiSecureClient.setCACert(_sslRootCa.c_str());
+    // // _wifiSecureClient.setCertificate(_sslCert.c_str());
+    // // _wifiSecureClient.setPrivateKey(_sslKey.c_str());
+    }
+    else {
+
+    }
     _mqttClient.setServer(_host.c_str(), _port );
-    _mqttClient.setClient(_wifiClient);
+    if (_useSSL) {
+        _mqttClient.setClient(_wifiSecureClient);
+        Serial.println("Connecting using SSL");
+    }
+    else {
+        _mqttClient.setClient(_wifiClient);
+        Serial.println("Connecting without SSL");
+    }
+
     _mqttClient.setCallback(callback);
-    // _wifiClient.setCACert(_sslRootCa.c_str());
-    // _wifiClient.setCertificate(_sslCert.c_str());
-    // _wifiClient.setPrivateKey(_sslKey.c_str());
     
     // set all topics
     Connection::setMqttMainTopic(_mainTopic);

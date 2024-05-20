@@ -9,12 +9,15 @@
 #include <ArduinoJson.h>
 #include <NTPClient.h>
 #include <WiFiUdp.h>
-// #include <WiFiClientSecure.h>
+#include <WiFiClientSecure.h>
 #include <WiFiClient.h>
 #include "timer.h"
 #include "return_codes.h"
 
+// #define ARDUINO_IOT_USE_SSL
+
 // all library code before endif
+
 
 class Connection 
 {
@@ -31,7 +34,8 @@ class Connection
             uint16_t mqttPort, 
             String mqttClientName, 
             int wifiLedPin, 
-            int mqttLedPin
+            int mqttLedPin,
+            bool useSSL
         );
         void wifiMqttConnect();
         void maintain();
@@ -69,11 +73,18 @@ class Connection
         String _ssid;
         String _passwd;
         String _host;
+        bool _useSSL;
         uint16_t _port;
         String _clientName;
         String _mainTopic;
+
+        // #ifdef ARDUINO_IOT_USE_SSL
         // WiFiClientSecure _wifiClient = WiFiClientSecure();
+        // #else
         WiFiClient _wifiClient = WiFiClient();
+        WiFiClientSecure _wifiSecureClient = WiFiClientSecure();
+        // #endif
+
         PubSubClient _mqttClient;
         String _callbackTopic;
         String _debugTopic;
