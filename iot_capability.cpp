@@ -321,9 +321,10 @@ void DebounceButton::tick() {
         case DebounceButton::START:
             if (switch_value == _pressed) {
                 _state = DebounceButton::GO;
-            } else {
-                _state = DebounceButton::RESET;
-            }
+            } 
+            // else {
+            //     _state = DebounceButton::RESET;
+            // }
             break;
         case DebounceButton::GO:
             _debounce_timer.set(_debounce_delay, "milliseconds");
