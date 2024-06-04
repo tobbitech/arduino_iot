@@ -285,6 +285,10 @@ void DebounceButton::begin() {
     _conn_pointer->maintain();
 }
 
+String DebounceButton::get_name() {
+    return(_name);
+}
+
 void DebounceButton::set_sticky_button_timer(Timer sticky_timer) {
     _sticky_timer = sticky_timer;
 }
@@ -397,9 +401,9 @@ void DebounceButton::tick() {
     }
 
     //debug
-    if (_state != _last_state) {
-        _conn_pointer->debug("Button " + _name + " changed state to: " + String(_state));
-    }
+    // if (_state != _last_state) {
+    //     _conn_pointer->debug("Button " + _name + " changed state to: " + String(_state));
+    // }
 }
 
 
