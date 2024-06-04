@@ -313,6 +313,10 @@ u_int32_t DebounceButton::get_hold_time_ms() {
     return millis() -_hold_time_ms;
 }
 
+String DebounceButton::get_set_topic() {
+    return(_mqtt_set_topic);
+}
+
 void DebounceButton::press() {
     _virtual_press = true;
 }
