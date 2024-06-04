@@ -60,9 +60,9 @@ class DS18B20_temperature_sensors
 };
 
 
-#define INPUT_MOMENTARY_HIGH_ON 0
-#define INPUT_MOMENTARY_LOW_ON  1
-#define INPUT_MOMENTARY_ANALOG  3
+// #define INPUT_MOMENTARY_HIGH_ON 0
+// #define INPUT_MOMENTARY_LOW_ON  1
+// #define INPUT_MOMENTARY_ANALOG  3
 // class InputMomentary
 // {
 //     public:
