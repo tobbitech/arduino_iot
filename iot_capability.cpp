@@ -179,25 +179,25 @@ void DS18B20_temperature_sensors::publishAllTemperatures()
 }   
 
 
-InputMomentary::InputMomentary(
-            Connection * conn_pointer, 
-            int pin, 
-            String name, 
-            String mqtt_topic, 
-            uint8_t mode,
-            String on_value, 
-            String off_value
-    ) {
-        _conn_pointer = conn_pointer;
-        _pin = pin;
-        _name = name;
-        _mqtt_topic = mqtt_topic;
-        _on_value = on_value;
-        _off_value = off_value;
-        _mode = mode;
-        _threshold_voltage = 3.3/2;
+// InputMomentary::InputMomentary(
+//             Connection * conn_pointer, 
+//             int pin, 
+//             String name, 
+//             String mqtt_topic, 
+//             uint8_t mode,
+//             String on_value, 
+//             String off_value
+//     ) {
+//         _conn_pointer = conn_pointer;
+//         _pin = pin;
+//         _name = name;
+//         _mqtt_topic = mqtt_topic;
+//         _on_value = on_value;
+//         _off_value = off_value;
+//         _mode = mode;
+//         _threshold_voltage = 3.3/2;
 
-    }
+//     }
 
 // void InputMomentary::begin() {
 //     // pinMode must be set elsewhere
