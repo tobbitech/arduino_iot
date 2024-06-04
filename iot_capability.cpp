@@ -199,54 +199,54 @@ InputMomentary::InputMomentary(
 
     }
 
-void InputMomentary::begin() {
-    // pinMode must be set elsewhere
+// void InputMomentary::begin() {
+//     // pinMode must be set elsewhere
     
 
-}
+// }
 
-void InputMomentary::check() {
-    // to be run as often as possible
-    int16_t value;
-    bool state = false;
-    if (_mode == INPUT_MOMENTARY_ANALOG) {
-        value = analogRead(_pin);
-        uint16_t threshold = round(4096 / 3.3) * _threshold_voltage;
-        if (value > threshold) {
-            state = true;
-        }
-    } else {
-        value = digitalRead(_pin);
-        if (_mode == INPUT_MOMENTARY_HIGH_ON) {
-            if (value > 0) {
-                state = true;
-            }
-        }
-        if (_mode == INPUT_MOMENTARY_LOW_ON) {
-            if (value == 0) {
-                state = true;
-            }
-        } 
-    }
+// void InputMomentary::check() {
+//     // to be run as often as possible
+//     int16_t value;
+//     bool state = false;
+//     if (_mode == INPUT_MOMENTARY_ANALOG) {
+//         value = analogRead(_pin);
+//         uint16_t threshold = round(4096 / 3.3) * _threshold_voltage;
+//         if (value > threshold) {
+//             state = true;
+//         }
+//     } else {
+//         value = digitalRead(_pin);
+//         if (_mode == INPUT_MOMENTARY_HIGH_ON) {
+//             if (value > 0) {
+//                 state = true;
+//             }
+//         }
+//         if (_mode == INPUT_MOMENTARY_LOW_ON) {
+//             if (value == 0) {
+//                 state = true;
+//             }
+//         } 
+//     }
 
-    if (state != _last_state) {
-        _last_state = state;
-        String debug_text = "Momentary input " + _name + " changed to: " + String(state);
-        if( _mode == INPUT_MOMENTARY_ANALOG) { debug_text += " with value " + String(value); }
-        _conn_pointer->debug(debug_text);
-        String value = _on_value;
-        if (state == false) { value = _off_value;}
-        _conn_pointer->publish(_mqtt_topic, value);
-    }
+//     if (state != _last_state) {
+//         _last_state = state;
+//         String debug_text = "Momentary input " + _name + " changed to: " + String(state);
+//         if( _mode == INPUT_MOMENTARY_ANALOG) { debug_text += " with value " + String(value); }
+//         _conn_pointer->debug(debug_text);
+//         String value = _on_value;
+//         if (state == false) { value = _off_value;}
+//         _conn_pointer->publish(_mqtt_topic, value);
+//     }
 
-}
+// }
 
 
-void InputMomentary::set_threshold_voltage(float new_threshold_voltage) {
-    _threshold_voltage = new_threshold_voltage;
-}
+// void InputMomentary::set_threshold_voltage(float new_threshold_voltage) {
+//     _threshold_voltage = new_threshold_voltage;
+// }
 
-DebounceButton::DebounceButton(
+InputMomentary::InputMomentary(
             Connection * conn_pointer, 
             int pin, 
             String name, 
@@ -269,8 +269,8 @@ DebounceButton::DebounceButton(
     _on_value = on_value;
     _off_value = off_value;
 
-    _state = DebounceButton::RESET;
-    _last_state = DebounceButton::RESET;
+    _state = InputMomentary::RESET;
+    _last_state = InputMomentary::RESET;
     _last_debounce_time = 0;
     _is_pressed = false;
     _is_released = false;
@@ -279,54 +279,54 @@ DebounceButton::DebounceButton(
 
 }
 
-void DebounceButton::begin() {
+void InputMomentary::begin() {
     _conn_pointer->subscribeMqttTopic(_mqtt_set_topic);
     _conn_pointer->debug("Push button " + _name + " created on topic " + _mqtt_topic);
     _conn_pointer->maintain();
 }
 
-String DebounceButton::get_name() {
+String InputMomentary::get_name() {
     return(_name);
 }
 
-void DebounceButton::set_sticky_button_timer(Timer sticky_timer) {
+void InputMomentary::set_sticky_button_timer(Timer sticky_timer) {
     _sticky_timer = sticky_timer;
 }
 
-uint32_t DebounceButton::get_remaining_sticky_hold_time_ms() {
+uint32_t InputMomentary::get_remaining_sticky_hold_time_ms() {
     return(_sticky_timer.remaining() );
 }
 
 
-bool DebounceButton::is_pressed() {
+bool InputMomentary::is_pressed() {
     return _is_pressed;
 }
 
-bool DebounceButton::is_released() {
+bool InputMomentary::is_released() {
     return _is_released;
 }
 
-bool DebounceButton::is_held() {
+bool InputMomentary::is_held() {
     return _is_held;
 }
 
-bool DebounceButton::is_sticky_held() {
+bool InputMomentary::is_sticky_held() {
     return (_is_sticky_held);
 }
 
-u_int32_t DebounceButton::get_hold_time_ms() {
+u_int32_t InputMomentary::get_hold_time_ms() {
     return millis() -_hold_time_ms;
 }
 
-String DebounceButton::get_set_topic() {
+String InputMomentary::get_set_topic() {
     return(_mqtt_set_topic);
 }
 
-void DebounceButton::press() {
+void InputMomentary::press() {
     _virtual_press = true;
 }
 
-void DebounceButton::tick() {
+void InputMomentary::tick() {
     switch_value = _unpressed;
     if (_virtual_press == true) {
         switch_value = _pressed;
@@ -344,58 +344,58 @@ void DebounceButton::tick() {
     _last_state = _state;
 
     switch(_state) {
-        case DebounceButton::RESET:
+        case InputMomentary::RESET:
             _is_pressed = false;
             _is_held = false;
             _is_released = false;
             _hold_time_ms = millis();
-            _state = DebounceButton::START;
+            _state = InputMomentary::START;
             break;
-        case DebounceButton::START:
+        case InputMomentary::START:
             if (switch_value == _pressed) {
-                _state = DebounceButton::GO;
+                _state = InputMomentary::GO;
             } 
             break;
-        case DebounceButton::GO:
+        case InputMomentary::GO:
             _debounce_timer.set(_debounce_delay, "milliseconds");
-            _state = DebounceButton::WAIT;
+            _state = InputMomentary::WAIT;
             break;
-        case DebounceButton::WAIT:
+        case InputMomentary::WAIT:
             if (switch_value == _unpressed) {
-                _state = DebounceButton::RESET;
+                _state = InputMomentary::RESET;
             } else if (_debounce_timer.is_done()) {
-                _state = DebounceButton::TRIGGERED;
+                _state = InputMomentary::TRIGGERED;
             }
             break;
-        case DebounceButton::TRIGGERED:
+        case InputMomentary::TRIGGERED:
             _virtual_press = false;
             _is_pressed = true;
             _hold_time_ms = millis();
             // Serial.println("Button pressed");
             _sticky_timer.reset();
             _conn_pointer->publish(_mqtt_topic, _on_value);
-            _state = DebounceButton::HELD;
+            _state = InputMomentary::HELD;
             break;
 
-        case DebounceButton::HELD:
+        case InputMomentary::HELD:
             _is_pressed = false;
             _is_held = true;
             _is_sticky_held = true;
             if (switch_value == _unpressed ) {
-                _state = DebounceButton::STICKY;
+                _state = InputMomentary::STICKY;
             }
             break;
-        case DebounceButton::STICKY:
+        case InputMomentary::STICKY:
             _is_held = false;
             if (_sticky_timer.is_done() ) {
-                _state = DebounceButton::RELEASED;
+                _state = InputMomentary::RELEASED;
             }
             break;
-        case DebounceButton::RELEASED:
+        case InputMomentary::RELEASED:
             _is_sticky_held = false;
             _is_released = true;
             _conn_pointer->publish(_mqtt_topic, _off_value);
-            _state = DebounceButton::RESET;
+            _state = InputMomentary::RESET;
             break;
     }
 
