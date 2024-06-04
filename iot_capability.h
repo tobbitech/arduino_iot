@@ -127,13 +127,19 @@ class DebounceButton {
 
 
     private:
+        Connection * _conn_pointer;
         int _pin;
+        String _name;
+        String _mqtt_topic;
         int _pressed;
         int _unpressed;
+        u_int32_t _debounce_delay;
+        String _on_value;
+        String _off_value;
+        
         int _state;
         int _last_state;
         u_int32_t _last_debounce_time;
-        u_int32_t _debounce_delay;
         u_int32_t _hold_time_ms;
         Timer _debounce_timer;
         Timer _sticky_timer;
@@ -144,8 +150,6 @@ class DebounceButton {
         bool _is_released; 
         bool _is_sticky_held;
 
-        bool _on_value;
-        bool _off_value;
 };
 
 // class DebounceInputMomentary 

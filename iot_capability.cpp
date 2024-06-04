@@ -257,10 +257,16 @@ DebounceButton::DebounceButton(
             String on_value = "true", 
             String off_value = "false")
 {
+    _conn_ponter = conn_pointer;
     _pin = pin;
+    _mqtt_topic = mqtt_topic;
+    _name = name;
     _pressed = on_level;
     _unpressed = !on_level;
     _debounce_delay = debounce_delay;
+    _on_value = on_value;
+    _off_value = off_value;
+
     _state = DebounceButton::RESET;
     _last_state = DebounceButton::RESET;
     _last_debounce_time = 0;
@@ -268,8 +274,6 @@ DebounceButton::DebounceButton(
     _is_released = false;
     _sticky_timer.set(0, "seconds");
     _is_sticky_held = false;
-    _on_value = on_value;
-    _off_value = off_value;
 
 }
 
@@ -365,7 +369,7 @@ void DebounceButton::tick() {
 
     //debug
     if (_state != _last_state) {
-        _conn_pointer->debug("State changed to: " + String(_state));
+        _conn_pointer->debug("Button " + _name + " changed state to: " + String(_state));
     }
 }
 
