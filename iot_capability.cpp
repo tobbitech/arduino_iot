@@ -314,6 +314,7 @@ u_int32_t DebounceButton::get_hold_time_ms() {
 }
 
 String DebounceButton::get_set_topic() {
+    _conn->debug("set topic: " + _mqtt_set_topic);
     return(_mqtt_set_topic);
 }
 
