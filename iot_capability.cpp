@@ -308,9 +308,16 @@ u_int32_t DebounceButton::get_hold_time_ms() {
     return millis() -_hold_time_ms;
 }
 
+void DebounceButton::press() {
+    _virtual_press = true;
+}
+
 void DebounceButton::tick() {
     switch_value = _unpressed;
-    if (_analog_threshold_V == 0 ) {
+    if (_virtual_press == true) {
+        switch_value = _pressed;
+    }
+    else if (_analog_threshold_V == 0 ) {
         switch_value = digitalRead(_pin);
     }
     else {
@@ -347,6 +354,7 @@ void DebounceButton::tick() {
             }
             break;
         case DebounceButton::TRIGGERED:
+            _virtual_press = false;
             _is_pressed = true;
             _hold_time_ms = millis();
             // Serial.println("Button pressed");

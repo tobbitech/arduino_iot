@@ -113,6 +113,8 @@ class DebounceButton {
         void set_sticky_button_timer(Timer sticky_timer);
         bool is_sticky_held();
         u_int32_t get_remaining_sticky_hold_time_ms();
+        String get_set_topic();
+        void press();
 
         enum state {
             RESET,
@@ -132,6 +134,7 @@ class DebounceButton {
         int _pin;
         String _name;
         String _mqtt_topic;
+        String _mqtt_set_topic = _mqtt_topic + "/set";
         int _pressed;
         int _unpressed;
         u_int32_t _debounce_delay;
@@ -151,6 +154,7 @@ class DebounceButton {
         bool _is_held;
         bool _is_released; 
         bool _is_sticky_held;
+        bool _virtual_press = false;
 
 };
 
