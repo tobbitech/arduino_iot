@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include "mqttConnection.h"
-#include "debounce.h"
+
 
 class OnOffSwitch
 {
@@ -104,7 +104,7 @@ class DebounceButton {
             u_int32_t debounce_delay = 50,
             String on_value = "true", 
             String off_value = "false");
-        void tick();
+        void check();
         bool is_pressed();
         bool is_held();
         bool is_released();
