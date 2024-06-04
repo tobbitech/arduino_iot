@@ -252,7 +252,7 @@ DebounceButton::DebounceButton(
             int pin, 
             String name, 
             String mqtt_topic,
-            float analog_threshold_V = 0,
+            float analog_threshold_V,
             bool on_level,
             u_int32_t debounce_delay,
             String on_value, 
