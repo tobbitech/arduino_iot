@@ -251,7 +251,8 @@ DebounceButton::DebounceButton(
             Connection * conn_pointer, 
             int pin, 
             String name, 
-            String mqtt_topic, 
+            String mqtt_topic,
+            float analog_threshold_V = 0,
             bool on_level,
             u_int32_t debounce_delay,
             String on_value, 
@@ -261,6 +262,7 @@ DebounceButton::DebounceButton(
     _pin = pin;
     _mqtt_topic = mqtt_topic;
     _name = name;
+    _analog_threshold_V = analog_threshold_V;
     _pressed = on_level;
     _unpressed = !on_level;
     _debounce_delay = debounce_delay;
@@ -307,7 +309,17 @@ u_int32_t DebounceButton::get_hold_time_ms() {
 }
 
 void DebounceButton::tick() {
-    switch_value = digitalRead(_pin);
+    switch_value = _unpressed;
+    if (_analog_threshold_V == 0 ) {
+        switch_value = digitalRead(_pin);
+    }
+    else {
+        uint16_t value = analogRead(_pin);
+        uint16_t threshold = round(4096 / 3.3) * _analog_threshold_V;
+        if (value > threshold) {
+            state = _pressed;
+        }
+    }
     _last_state = _state;
 
     switch(_state) {
@@ -322,9 +334,6 @@ void DebounceButton::tick() {
             if (switch_value == _pressed) {
                 _state = DebounceButton::GO;
             } 
-            // else {
-            //     _state = DebounceButton::RESET;
-            // }
             break;
         case DebounceButton::GO:
             _debounce_timer.set(_debounce_delay, "milliseconds");
