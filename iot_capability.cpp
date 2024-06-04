@@ -361,7 +361,12 @@ void DebounceButton::tick() {
             _conn_pointer->publish(_mqtt_topic, _off_value);
             _state = DebounceButton::RESET;
             break;
-    }   
+    }
+
+    //debug
+    if (_state != _last_state) {
+        _conn_pointer->debug("State changed to: " + String(_state));
+    }
 }
 
 
