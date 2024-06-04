@@ -100,6 +100,7 @@ class DebounceButton {
             int pin, 
             String name, 
             String mqtt_topic, 
+            float analog_threshold_V = 0, // uses digitalRead when 0
             bool on_level = HIGH,
             u_int32_t debounce_delay = 50,
             String on_value = "true", 
@@ -136,6 +137,7 @@ class DebounceButton {
         u_int32_t _debounce_delay;
         String _on_value;
         String _off_value;
+        float _analog_threshold_V = 0;
         
         int _state;
         int _last_state;
