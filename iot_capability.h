@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "mqttConnection.h"
+#include "debounce.h"
 
 class OnOffSwitch
 {
@@ -89,12 +90,85 @@ class InputMomentary
         String _off_value;
         float _threshold_voltage;
         uint8_t _mode;
-        bool _last_state;
-
-
-        
+        bool _last_state;    
 };
 
+class DebounceButton {
+    public:
+        DebounceButton(
+            Connection * conn_pointer, 
+            int pin, 
+            String name, 
+            String mqtt_topic, 
+            bool on_level = HIGH,
+            u_int32_t debounce_delay = 50,
+            String on_value = "true", 
+            String off_value = "false");
+        void tick();
+        bool is_pressed();
+        bool is_held();
+        bool is_released();
+        u_int32_t get_hold_time_ms();
+        void set_sticky_button_timer(Timer sticky_timer);
+        bool is_sticky_held();
+        u_int32_t get_remaining_sticky_hold_time_ms();
+
+        enum state {
+            RESET,
+            START,
+            GO,
+            WAIT,
+            TRIGGERED,
+            HELD,
+            STICKY,
+            RELEASED
+        };
+
+
+
+    private:
+        int _pin;
+        int _pressed;
+        int _unpressed;
+        int _state;
+        int _last_state;
+        u_int32_t _last_debounce_time;
+        u_int32_t _debounce_delay;
+        u_int32_t _hold_time_ms;
+        Timer _debounce_timer;
+        Timer _sticky_timer;
+
+        int switch_value;
+        bool _is_pressed;
+        bool _is_held;
+        bool _is_released; 
+        bool _is_sticky_held;
+};
+
+// class DebounceInputMomentary 
+// {
+//     public:
+//         DebounceInputMomentary(
+//                 Connection * conn_pointer, 
+//                 int pin, 
+//                 String name, 
+//                 String mqtt_topic, 
+//                 uint8_t mode = INPUT_MOMENTARY_HIGH_ON,
+//                 String on_value = "true", 
+//                 String off_value = "false"
+//         );
+//         void begin();
+//         void check();
+
+//     private:
+//         Connection * _conn_pointer;
+//         int _pin;
+//         String _name;
+//         String _mqtt_topic;
+//         String _on_value;
+//         String _off_value;
+//         DebounceButton _button;
+// }
 
 
 #define HAN_READ_TIMEOUT_MS 100
