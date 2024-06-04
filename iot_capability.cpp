@@ -260,6 +260,7 @@ DebounceButton::DebounceButton(
     _conn_pointer = conn_pointer;
     _pin = pin;
     _mqtt_topic = mqtt_topic;
+    _mqtt_set_topic = mqtt_topic + "/set";
     _name = name;
     _analog_threshold_V = analog_threshold_V;
     _pressed = on_level;

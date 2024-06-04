@@ -135,7 +135,7 @@ class DebounceButton {
         int _pin;
         String _name;
         String _mqtt_topic;
-        String _mqtt_set_topic = _mqtt_topic + "/set";
+        String _mqtt_set_topic
         int _pressed;
         int _unpressed;
         u_int32_t _debounce_delay;
