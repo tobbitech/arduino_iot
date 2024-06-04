@@ -257,7 +257,7 @@ DebounceButton::DebounceButton(
             String on_value = "true", 
             String off_value = "false")
 {
-    _conn_ponter = conn_pointer;
+    _conn_pointer = conn_pointer;
     _pin = pin;
     _mqtt_topic = mqtt_topic;
     _name = name;
