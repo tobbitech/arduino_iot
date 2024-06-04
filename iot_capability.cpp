@@ -19,10 +19,9 @@ OnOffSwitch::OnOffSwitch(Connection * conn_pointer, int pin, String name, String
 
 void OnOffSwitch::begin() {
     pinMode(_pin, OUTPUT);
-    (*_conn_pointer).subscribeMqttTopic(_mqtt_topic);
-    (*_conn_pointer).debug("OnOffSwitch " + _name + " created on topic " + _mqtt_topic);
-    (*_conn_pointer).maintain();
-    _conn_pointer->debug("Using '->' to call member function from pointer to object");
+    _conn_pointer->subscribeMqttTopic(_mqtt_topic);
+    _conn_pointer->debug("OnOffSwitch " + _name + " created on topic " + _mqtt_topic);
+    _conn_pointer->maintain();
     
 }
 
@@ -277,6 +276,12 @@ DebounceButton::DebounceButton(
     _sticky_timer.set(0, "seconds");
     _is_sticky_held = false;
 
+}
+
+void DebounceButton::begin() {
+    _conn_pointer->subscribeMqttTopic(_mqtt_set_topic);
+    _conn_pointer->debug("Push button " + _name + " created on topic " + _mqtt_topic);
+    _conn_pointer->maintain();
 }
 
 void DebounceButton::set_sticky_button_timer(Timer sticky_timer) {
