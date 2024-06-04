@@ -105,6 +105,7 @@ class DebounceButton {
             u_int32_t debounce_delay = 50,
             String on_value = "true", 
             String off_value = "false");
+        void begin();
         void tick();
         bool is_pressed();
         bool is_held();
