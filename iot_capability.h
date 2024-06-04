@@ -59,40 +59,6 @@ class DS18B20_temperature_sensors
         size_t _mapSize;
 };
 
-
-// #define INPUT_MOMENTARY_HIGH_ON 0
-// #define INPUT_MOMENTARY_LOW_ON  1
-// #define INPUT_MOMENTARY_ANALOG  3
-// class InputMomentary
-// {
-//     public:
-//         InputMomentary(
-//                 Connection * conn_pointer, 
-//                 int pin, 
-//                 String name, 
-//                 String mqtt_topic, 
-//                 uint8_t mode = INPUT_MOMENTARY_HIGH_ON,
-//                 String on_value = "true", 
-//                 String off_value = "false"
-//         );
-//         void begin();
-//         void check();
-//         void set_threshold_voltage(float voltage);
-
-
-
-//     private:
-//         Connection * _conn_pointer;
-//         int _pin;
-//         String _name;
-//         String _mqtt_topic;
-//         String _on_value;
-//         String _off_value;
-//         float _threshold_voltage;
-//         uint8_t _mode;
-//         bool _last_state;    
-// };
-
 class InputMomentary {
     public:
         InputMomentary(

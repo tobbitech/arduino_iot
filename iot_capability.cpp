@@ -178,74 +178,6 @@ void DS18B20_temperature_sensors::publishAllTemperatures()
     }
 }   
 
-
-// InputMomentary::InputMomentary(
-//             Connection * conn_pointer, 
-//             int pin, 
-//             String name, 
-//             String mqtt_topic, 
-//             uint8_t mode,
-//             String on_value, 
-//             String off_value
-//     ) {
-//         _conn_pointer = conn_pointer;
-//         _pin = pin;
-//         _name = name;
-//         _mqtt_topic = mqtt_topic;
-//         _on_value = on_value;
-//         _off_value = off_value;
-//         _mode = mode;
-//         _threshold_voltage = 3.3/2;
-
-//     }
-
-// void InputMomentary::begin() {
-//     // pinMode must be set elsewhere
-    
-
-// }
-
-// void InputMomentary::check() {
-//     // to be run as often as possible
-//     int16_t value;
-//     bool state = false;
-//     if (_mode == INPUT_MOMENTARY_ANALOG) {
-//         value = analogRead(_pin);
-//         uint16_t threshold = round(4096 / 3.3) * _threshold_voltage;
-//         if (value > threshold) {
-//             state = true;
-//         }
-//     } else {
-//         value = digitalRead(_pin);
-//         if (_mode == INPUT_MOMENTARY_HIGH_ON) {
-//             if (value > 0) {
-//                 state = true;
-//             }
-//         }
-//         if (_mode == INPUT_MOMENTARY_LOW_ON) {
-//             if (value == 0) {
-//                 state = true;
-//             }
-//         } 
-//     }
-
-//     if (state != _last_state) {
-//         _last_state = state;
-//         String debug_text = "Momentary input " + _name + " changed to: " + String(state);
-//         if( _mode == INPUT_MOMENTARY_ANALOG) { debug_text += " with value " + String(value); }
-//         _conn_pointer->debug(debug_text);
-//         String value = _on_value;
-//         if (state == false) { value = _off_value;}
-//         _conn_pointer->publish(_mqtt_topic, value);
-//     }
-
-// }
-
-
-// void InputMomentary::set_threshold_voltage(float new_threshold_voltage) {
-//     _threshold_voltage = new_threshold_voltage;
-// }
-
 InputMomentary::InputMomentary(
             Connection * conn_pointer, 
             int pin, 
@@ -398,11 +330,6 @@ void InputMomentary::tick() {
             _state = InputMomentary::RESET;
             break;
     }
-
-    //debug
-    // if (_state != _last_state) {
-    //     _conn_pointer->debug("Button " + _name + " changed state to: " + String(_state));
-    // }
 }
 
 
