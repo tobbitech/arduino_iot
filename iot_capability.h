@@ -115,6 +115,7 @@ class DebounceButton {
         bool is_sticky_held();
         u_int32_t get_remaining_sticky_hold_time_ms();
         String get_set_topic();
+        String get_name();
         void press();
 
         enum state {
