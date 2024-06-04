@@ -143,6 +143,9 @@ class DebounceButton {
         bool _is_held;
         bool _is_released; 
         bool _is_sticky_held;
+
+        bool _on_value;
+        bool _off_value;
 };
 
 // class DebounceInputMomentary 

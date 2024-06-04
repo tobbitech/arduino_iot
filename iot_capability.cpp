@@ -268,6 +268,8 @@ DebounceButton::DebounceButton(
     _is_released = false;
     _sticky_timer.set(0, "seconds");
     _is_sticky_held = false;
+    _on_value = on_value;
+    _off_value = off_value;
 
 }
 
@@ -331,11 +333,12 @@ void DebounceButton::tick() {
             }
             break;
         case DebounceButton::TRIGGERED:
-            _state = DebounceButton::HELD;
             _is_pressed = true;
             _hold_time_ms = millis();
             // Serial.println("Button pressed");
             _sticky_timer.reset();
+            _conn_pointer->publish(_mqtt_topic, _on_value);
+            _state = DebounceButton::HELD;
             break;
 
         case DebounceButton::HELD:
@@ -355,6 +358,7 @@ void DebounceButton::tick() {
         case DebounceButton::RELEASED:
             _is_sticky_held = false;
             _is_released = true;
+            _conn_pointer->publish(_mqtt_topic, _off_value);
             _state = DebounceButton::RESET;
             break;
     }   
