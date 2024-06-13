@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include "mqttConnection.h"
 
+
 class OnOffSwitch
 {
     public:
@@ -58,25 +59,41 @@ class DS18B20_temperature_sensors
         size_t _mapSize;
 };
 
-
-#define INPUT_MOMENTARY_HIGH_ON 0
-#define INPUT_MOMENTARY_LOW_ON  1
-#define INPUT_MOMENTARY_ANALOG  3
-class InputMomentary
-{
+class InputMomentary {
     public:
         InputMomentary(
-                Connection * conn_pointer, 
-                int pin, 
-                String name, 
-                String mqtt_topic, 
-                uint8_t mode = INPUT_MOMENTARY_HIGH_ON,
-                String on_value = "true", 
-                String off_value = "false"
-        );
+            Connection * conn_pointer, 
+            int pin, 
+            String name, 
+            String mqtt_topic, 
+            float analog_threshold_V = 0, // uses digitalRead when 0
+            bool on_level = HIGH,
+            u_int32_t debounce_delay = 50,
+            String on_value = "true", 
+            String off_value = "false");
         void begin();
-        void check();
-        void set_threshold_voltage(float voltage);
+        void tick();
+        bool is_pressed();
+        bool is_held();
+        bool is_released();
+        u_int32_t get_hold_time_ms();
+        void set_sticky_button_timer(Timer sticky_timer);
+        bool is_sticky_held();
+        u_int32_t get_remaining_sticky_hold_time_ms();
+        String get_set_topic();
+        String get_name();
+        void press();
+
+        enum state {
+            RESET,
+            START,
+            GO,
+            WAIT,
+            TRIGGERED,
+            HELD,
+            STICKY,
+            RELEASED
+        };
 
 
 
@@ -85,17 +102,29 @@ class InputMomentary
         int _pin;
         String _name;
         String _mqtt_topic;
+        String _mqtt_set_topic;
+        int _pressed;
+        int _unpressed;
+        u_int32_t _debounce_delay;
         String _on_value;
         String _off_value;
-        float _threshold_voltage;
-        uint8_t _mode;
-        bool _last_state;
-
-
+        float _analog_threshold_V = 0;
         
+        int _state;
+        int _last_state;
+        u_int32_t _last_debounce_time;
+        u_int32_t _hold_time_ms;
+        Timer _debounce_timer;
+        Timer _sticky_timer;
+
+        int switch_value;
+        bool _is_pressed;
+        bool _is_held;
+        bool _is_released; 
+        bool _is_sticky_held;
+        bool _virtual_press = false;
+
 };
-
-
 
 #define HAN_READ_TIMEOUT_MS 100
 #define HAN_MAX_MESSAGE_SIZE 2000

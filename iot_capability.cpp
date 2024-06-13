@@ -19,10 +19,9 @@ OnOffSwitch::OnOffSwitch(Connection * conn_pointer, int pin, String name, String
 
 void OnOffSwitch::begin() {
     pinMode(_pin, OUTPUT);
-    (*_conn_pointer).subscribeMqttTopic(_mqtt_topic);
-    (*_conn_pointer).debug("OnOffSwitch " + _name + " created on topic " + _mqtt_topic);
-    (*_conn_pointer).maintain();
-    _conn_pointer->debug("Using '->' to call member function from pointer to object");
+    _conn_pointer->subscribeMqttTopic(_mqtt_topic);
+    _conn_pointer->debug("OnOffSwitch " + _name + " created on topic " + _mqtt_topic);
+    _conn_pointer->maintain();
     
 }
 
@@ -179,73 +178,161 @@ void DS18B20_temperature_sensors::publishAllTemperatures()
     }
 }   
 
-
 InputMomentary::InputMomentary(
             Connection * conn_pointer, 
             int pin, 
             String name, 
-            String mqtt_topic, 
-            uint8_t mode,
+            String mqtt_topic,
+            float analog_threshold_V,
+            bool on_level,
+            u_int32_t debounce_delay,
             String on_value, 
-            String off_value
-    ) {
-        _conn_pointer = conn_pointer;
-        _pin = pin;
-        _name = name;
-        _mqtt_topic = mqtt_topic;
-        _on_value = on_value;
-        _off_value = off_value;
-        _mode = mode;
-        _threshold_voltage = 3.3/2;
+            String off_value)
+{
+    _conn_pointer = conn_pointer;
+    _pin = pin;
+    _mqtt_topic = mqtt_topic;
+    _mqtt_set_topic = mqtt_topic + "/set";
+    _name = name;
+    _analog_threshold_V = analog_threshold_V;
+    _pressed = on_level;
+    _unpressed = !on_level;
+    _debounce_delay = debounce_delay;
+    _on_value = on_value;
+    _off_value = off_value;
 
-    }
+    _state = InputMomentary::RESET;
+    _last_state = InputMomentary::RESET;
+    _last_debounce_time = 0;
+    _is_pressed = false;
+    _is_released = false;
+    _sticky_timer.set(0, "seconds");
+    _is_sticky_held = false;
+
+}
 
 void InputMomentary::begin() {
-    // pinMode must be set elsewhere
-    
-
+    _conn_pointer->subscribeMqttTopic(_mqtt_set_topic);
+    _conn_pointer->debug("Push button " + _name + " created on topic " + _mqtt_topic);
+    _conn_pointer->maintain();
 }
 
-void InputMomentary::check() {
-    // to be run as often as possible
-    int16_t value;
-    bool state = false;
-    if (_mode == INPUT_MOMENTARY_ANALOG) {
-        value = analogRead(_pin);
-        uint16_t threshold = round(4096 / 3.3) * _threshold_voltage;
+String InputMomentary::get_name() {
+    return(_name);
+}
+
+void InputMomentary::set_sticky_button_timer(Timer sticky_timer) {
+    _sticky_timer = sticky_timer;
+}
+
+uint32_t InputMomentary::get_remaining_sticky_hold_time_ms() {
+    return(_sticky_timer.remaining() );
+}
+
+
+bool InputMomentary::is_pressed() {
+    return _is_pressed;
+}
+
+bool InputMomentary::is_released() {
+    return _is_released;
+}
+
+bool InputMomentary::is_held() {
+    return _is_held;
+}
+
+bool InputMomentary::is_sticky_held() {
+    return (_is_sticky_held);
+}
+
+u_int32_t InputMomentary::get_hold_time_ms() {
+    return millis() -_hold_time_ms;
+}
+
+String InputMomentary::get_set_topic() {
+    return(_mqtt_set_topic);
+}
+
+void InputMomentary::press() {
+    _virtual_press = true;
+}
+
+void InputMomentary::tick() {
+    switch_value = _unpressed;
+    if (_virtual_press == true) {
+        switch_value = _pressed;
+    }
+    else if (_analog_threshold_V == 0 ) {
+        switch_value = digitalRead(_pin);
+    }
+    else {
+        uint16_t value = analogRead(_pin);
+        uint16_t threshold = round(4096 / 3.3) * _analog_threshold_V;
         if (value > threshold) {
-            state = true;
+            switch_value = _pressed;
         }
-    } else {
-        value = digitalRead(_pin);
-        if (_mode == INPUT_MOMENTARY_HIGH_ON) {
-            if (value > 0) {
-                state = true;
-            }
-        }
-        if (_mode == INPUT_MOMENTARY_LOW_ON) {
-            if (value == 0) {
-                state = true;
-            }
-        } 
     }
+    _last_state = _state;
 
-    if (state != _last_state) {
-        _last_state = state;
-        String debug_text = "Momentary input " + _name + " changed to: " + String(state);
-        if( _mode == INPUT_MOMENTARY_ANALOG) { debug_text += " with value " + String(value); }
-        _conn_pointer->debug(debug_text);
-        String value = _on_value;
-        if (state == false) { value = _off_value;}
-        _conn_pointer->publish(_mqtt_topic, value);
+    switch(_state) {
+        case InputMomentary::RESET:
+            _is_pressed = false;
+            _is_held = false;
+            _is_released = false;
+            _hold_time_ms = millis();
+            _state = InputMomentary::START;
+            break;
+        case InputMomentary::START:
+            if (switch_value == _pressed) {
+                _state = InputMomentary::GO;
+            } 
+            break;
+        case InputMomentary::GO:
+            _debounce_timer.set(_debounce_delay, "milliseconds");
+            _state = InputMomentary::WAIT;
+            break;
+        case InputMomentary::WAIT:
+            if (switch_value == _unpressed) {
+                _state = InputMomentary::RESET;
+            } else if (_debounce_timer.is_done()) {
+                _state = InputMomentary::TRIGGERED;
+            }
+            break;
+        case InputMomentary::TRIGGERED:
+            _virtual_press = false;
+            _is_pressed = true;
+            _hold_time_ms = millis();
+            // Serial.println("Button pressed");
+            _sticky_timer.reset();
+            _conn_pointer->publish(_mqtt_topic, _on_value);
+            _state = InputMomentary::HELD;
+            break;
+
+        case InputMomentary::HELD:
+            _is_pressed = false;
+            _is_held = true;
+            _is_sticky_held = true;
+            if (switch_value == _unpressed ) {
+                _state = InputMomentary::STICKY;
+            }
+            break;
+        case InputMomentary::STICKY:
+            _is_held = false;
+            if (_sticky_timer.is_done() ) {
+                _state = InputMomentary::RELEASED;
+            }
+            break;
+        case InputMomentary::RELEASED:
+            _is_sticky_held = false;
+            _is_released = true;
+            _conn_pointer->publish(_mqtt_topic, _off_value);
+            _state = InputMomentary::RESET;
+            break;
     }
-
 }
 
 
-void InputMomentary::set_threshold_voltage(float new_threshold_voltage) {
-    _threshold_voltage = new_threshold_voltage;
-}
 
 
 HANreader::HANreader(Connection * conn, String mqttTopic, uint8_t RXpin, uint8_t TXpin): serialHAN(1)
