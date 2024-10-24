@@ -335,7 +335,8 @@ void Connection::wifiMqttConnect() {
         delay(800);
         tries++;
         if (tries > 1000) {
-            Serial.println("Connection Failed! Rebooting...");
+            Serial.println("Cannot connect. Rebooting...");
+            nvs2.log("Cannot connect, rebooting");
             delay(5000);
             ESP.restart();
         }
