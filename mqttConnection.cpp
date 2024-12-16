@@ -30,79 +30,92 @@ DynamicJsonDocument _jsonDoc(uint16_t size)
 
 void WiFiStationWifiReady(WiFiEvent_t event, WiFiEventInfo_t info) {
     Serial.println("ARDUINO_EVENT_WIFI_READY");
+    nvs2.log("Event: ARDUINO_EVENT_WIFI_READY");
 }
 
 void WiFiStationWifiScanDone(WiFiEvent_t event, WiFiEventInfo_t info) {
     Serial.println("ARDUINO_EVENT_WIFI_SCAN_DONE");
+    nvs2.log("Event: ARDUINO_EVENT_WIFI_SCAN_DONE");
 }
 
 void WiFiStationStaStart(WiFiEvent_t event, WiFiEventInfo_t info) {
     Serial.println("ARDUINO_EVENT_WIFI_STA_START");
+    nvs2.log("Event: ARDUINO_EVENT_WIFI_STA_START");
 }
 
 void WiFiStationStaStop(WiFiEvent_t event, WiFiEventInfo_t info) {
     Serial.println("ARDUINO_EVENT_WIFI_STA_START");
+    nvs2.log("Event: ARDUINO_EVENT_WIFI_STA_START");
 }
 
 void WiFiStationConnected(WiFiEvent_t event, WiFiEventInfo_t info) {
     Serial.println("ARDUINO_EVENT_WIFI_STA_CONNECTED");
-    nvs2.log("Wifi connected");
+    nvs2.log("Event: Wifi connected");
 }
 
 void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info) {
     Serial.println("ARDUINO_EVENT_WIFI_STA_DISCONNECTED");
-    nvs2.log("Wifi disconnected");
+    nvs2.log("Event: Wifi disconnected");
 }
 
 void WiFiStationAuthmodeChange(WiFiEvent_t event, WiFiEventInfo_t info) {
     Serial.println("ARDUINO_EVENT_WIFI_AUTH_MODE_CHANGED");
+    nvs2.log("Event: ARDUINO_EVENT_WIFI_AUTH_MODE_CHANGED");
 }
 
 void WiFiStationGotIp(WiFiEvent_t event, WiFiEventInfo_t info) {
     Serial.println("ARDUINO_EVENT_WIFI_STA_GOT_IP");
-    nvs2.log("Got IP");
+    nvs2.log("Event: Got IP -> " + WiFi.localIP().toString() );
 }
 
 void WiFiStationGotIp6(WiFiEvent_t event, WiFiEventInfo_t info) {
     Serial.println("ARDUINO_EVENT_WIFI_STA_GOT_IP_6");
-    nvs2.log("Got IP6");
+    nvs2.log("Event: Got IP6");
 }
 
 void WiFiStationLostIp(WiFiEvent_t event, WiFiEventInfo_t info) {
     Serial.println("ARDUINO_EVENT_WIFI_STA_LOST_IP");
-    nvs2.log("Lost IP");
+    nvs2.log("Event: Lost IP");
 }
 
 void WiFiApStart(WiFiEvent_t event, WiFiEventInfo_t info) {
     Serial.println("ARDUINO_EVENT_WIFI_AP_START");
+    nvs2.log("Event: ARDUINO_EVENT_WIFI_AP_START");
 }
 
 void WiFiApStop(WiFiEvent_t event, WiFiEventInfo_t info) {
     Serial.println("ARDUINO_EVENT_WIFI_AP_STOP");
+    nvs2.log("Event: ARDUINO_EVENT_WIFI_AP_STOP");
 }
 
 void WiFiApStaConnected(WiFiEvent_t event, WiFiEventInfo_t info) {
     Serial.println("ARDUINO_EVENT_WIFI_AP_STACONNECTED");
+    nvs2.log("Event: ARDUINO_EVENT_WIFI_AP_STACONNECTED");
 }
 
 void WiFiApStaDisconnected(WiFiEvent_t event, WiFiEventInfo_t info) {
     Serial.println("ARDUINO_EVENT_WIFI_AP_STADISCONNECTED");
+    nvs2.log("Event: ARDUINO_EVENT_WIFI_AP_STADISCONNECTED");
 }
 
 void WiFiApStaIpasSigned(WiFiEvent_t event, WiFiEventInfo_t info) {
     Serial.println("ARDUINO_EVENT_WIFI_AP_STAIPASSIGNED");
+    nvs2.log("Event: ARDUINO_EVENT_WIFI_AP_STAIPASSIGNED");
 }
 
 void WiFiApProbeEwqRecved(WiFiEvent_t event, WiFiEventInfo_t info) {
     Serial.println("ARDUINO_EVENT_WIFI_AP_PROBEREQRECVED");
+    nvs2.log("Event: ARDUINO_EVENT_WIFI_AP_PROBEREQRECVED");
 }
 
 void WiFiApGotIp6(WiFiEvent_t event, WiFiEventInfo_t info) {
     Serial.println("ARDUINO_EVENT_WIFI_AP_GOT_IP6");
+    nvs2.log("Event: ARDUINO_EVENT_WIFI_AP_GOT_IP6");
 }
 
 void WiFiFtmReport(WiFiEvent_t event, WiFiEventInfo_t info) {
     Serial.println("ARDUINO_EVENT_WIFI_FTM_REPORT");
+    nvs2.log("Event: ARDUINO_EVENT_WIFI_FTM_REPORT");
 }
 
 void merge(JsonObject dest, JsonObjectConst src)
@@ -221,6 +234,7 @@ void Connection::otaEnable() {
         else if (error == OTA_END_ERROR) Serial.println("End Failed");
         });
 
+    nvs2.log("Enabling OTA");
     ArduinoOTA.begin();
 }
 
@@ -272,26 +286,30 @@ void Connection::connect(
     if (_useSSL) {
         Serial.println("Setting CA cert (using SSL)");
         _wifiSecureClient.setCACert(_sslRootCa.c_str());
+        
     // // _wifiSecureClient.setCertificate(_sslCert.c_str());
     // // _wifiSecureClient.setPrivateKey(_sslKey.c_str());
     }
     else {
-
+        
     }
     _mqttClient.setServer(_host.c_str(), _port );
     if (_useSSL) {
         _mqttClient.setClient(_wifiSecureClient);
         Serial.println("Connecting using SSL");
+        nvs2.log("Connecting to MQTT broker with SSL");
     }
     else {
         _mqttClient.setClient(_wifiClient);
         Serial.println("Connecting without SSL");
+        nvs2.log("Connecting to MQTT broker without SSL");
     }
 
     _mqttClient.setCallback(callback);
     
     // set all topics
     Connection::setMqttMainTopic(_mainTopic);
+    nvs2.log("Setting MQTT main topic to: " + _mainTopic);
     
     Connection::wifiMqttConnect();
 
@@ -302,6 +320,7 @@ void Connection::wifiMqttConnect() {
     // initalization function for establishing wifi connection
     Serial.print("Connecting to ");
     Serial.println(_ssid);
+    nvs2.log("Connecting to " + _ssid);
     WiFi.mode(WIFI_STA);
     
     // setup Wifi events
@@ -340,6 +359,9 @@ void Connection::wifiMqttConnect() {
             delay(5000);
             ESP.restart();
         }
+        nvs2.log("Connected to WiFi after " + tries + " tries");
+        timestamp = getTimestamp();
+        nvs2.log("Time is: " + String(timestamp));
         }
     Serial.println();
     _wifiOk = true;
@@ -354,10 +376,13 @@ void Connection::wifiMqttConnect() {
     Serial.print("MAC address: ");
     Serial.println(WiFi.macAddress());
 
+    delay(2000); // letting wifi connection stabilize before connecting to MQTT - bugfix?
+
     _mqttClient.setBufferSize(4096); // overrides MQTT_MAX_PACKET_SIZE in PubSubClient.h
     _mqttClient.connect(_clientName.c_str() );
     _mqttClient.subscribe(_callbackTopic.c_str() );
     debug("Connected to broker as " + _clientName);
+    nvs2.log("Connected to MQTT broker as: " + _clientName);
 }
 
 void Connection::subscribeMqttTopic(String topic)
@@ -374,7 +399,7 @@ void Connection::maintain()
 
     // check mqtt connection
     if ( ! _mqttClient.state() == 0 ) {
-        nvs2.log("MQTT disconnected");
+        nvs2.log("MQTT disconnected in maintain()");
         _mqttOk = false;
         setStatusLeds();
         Serial.println(String("MQTT connection failed with code " + String(_mqttClient.state() )));
@@ -388,7 +413,7 @@ void Connection::maintain()
 
     // check wifi connection
     if ( WiFi.status() != WL_CONNECTED ) {
-        nvs2.log("Wifi not connected");
+        nvs2.log("Wifi not connected in maintain()");
         _wifiOk = false;
         setStatusLeds();
         Serial.println("Wifi not connected");
