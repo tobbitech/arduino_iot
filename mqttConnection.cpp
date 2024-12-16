@@ -359,7 +359,7 @@ void Connection::wifiMqttConnect() {
             delay(5000);
             ESP.restart();
         }
-        nvs2.log("Connected to WiFi after " + tries + " tries");
+        nvs2.log("Connected to WiFi after " + String(tries) + " tries");
         timestamp = getTimestamp();
         nvs2.log("Time is: " + String(timestamp));
         }
