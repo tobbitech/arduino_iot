@@ -360,7 +360,7 @@ void Connection::wifiMqttConnect() {
             ESP.restart();
         }
         nvs2.log("Connected to WiFi after " + String(tries) + " tries");
-        timestamp = getTimestamp();
+        auto timestamp = getTimestamp();
         nvs2.log("Time is: " + String(timestamp));
         }
     Serial.println();
