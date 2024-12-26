@@ -440,13 +440,10 @@ PubSubClient Connection::get_mqttClient()
 
 int Connection::publish(String topic, String message)
 {
+    digitalWrite(_mqttLed, LOW);
     if (_mqttClient.publish(topic.c_str(), message.c_str()) ) {
         _mqttOk = true;
         setStatusLeds();
-        digitalWrite(_mqttLed, !digitalRead(_mqttLed));
-        delay(20);
-        digitalWrite(_mqttLed, !digitalRead(_mqttLed));
-        delay(20);
         return(0);
     }
     else {
