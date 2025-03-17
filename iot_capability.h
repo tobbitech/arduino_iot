@@ -217,4 +217,24 @@ class VEdirectReader {
         bool _max_power_yesterday_is_set;
 };
 
+
+class Thermostat
+{
+    public:
+        Thermostat(Connection * conn, DS18B20_temperature_sensor tempsensor, String mqtt_main_topic);
+        void tick();
+        void set_max_temperature(float temperature);
+        void set_min_temperature(float temperature);
+        float get_min_temperature();
+        float get_max_temperature();
+        float get_measured_temperature();
+        
+
+
+
+
+
+    private:
+}
+
 #endif
