@@ -763,3 +763,85 @@ void VEdirectReader::parse_message() {
         }
     }
 }
+
+
+Thermostat::Thermostat(Connection * conn, DS18B20_temperature_sensors tempsensor,  uint8_t tempsensor_index, uint8_t relay_pin, String name, String mqtt_topic) {
+    _conn = conn;
+    _tempsensor = tempsensor;
+    _tempsensor_index;
+    _relay_pin = relay_pin;
+    _name = name;
+    _mqtt_topic = mqtt_topic;
+
+    pinMode(relay_pin, OUTPUT);
+}
+
+void Thermostat::set_max_temperature_C(float temperature) {
+    if (temperature <= _min_temperature_C) {
+            _conn->debug("New max temperature lower than min temperature");
+            return;
+    }
+    _max_temperature_C = temperature;
+    return;
+}
+
+void Thermostat::set_min_temperature_C(float temperature) {
+    if (temperature >= _max_temperature_C) {
+            _conn->debug("New min temperature higher than max temperature");
+            return;
+    }
+    _min_temperature_C = temperature;
+}
+
+void Thermostat::set_mqtt_max_temp_topic(String topic) {
+    _mqtt_max_temp_topic = topic;
+}
+
+void Thermostat::set_mqtt_min_temp_topic(String topic) {
+    _mqtt_min_temp_topic = topic;
+}
+
+float Thermostat::get_max_temperature_C() {
+    return(_max_temperature_C);
+}
+
+float Thermostat::get_min_temperature_C() {
+    return(_min_temperature_C);
+}
+
+String Thermostat::get_mqtt_max_temp_topic() {
+    return(_mqtt_max_temp_topic);
+}
+
+String Thermostat::get_mqtt_min_temp_topic() {
+    return(_mqtt_min_temp_topic);
+}
+
+float Thermostat::get_measured_temperature_C() {
+    float temperature = _tempsensor.getTemperature(_tempsensor_index);
+    return(temperature);
+}
+
+void Thermostat::parse_mqtt_message(String mqtt_message, String topic) {
+    if (topic == _mqtt_max_temp_topic) {
+        float new_max_temperature = mqtt_message.toFloat();
+        set_max_temperature_C(new_max_temperature);
+    }
+    else if (topic == _mqtt_min_temp_topic) {
+        float new_min_temperature = mqtt_message.toFloat();
+        set_min_temperature_C(new_min_temperature);
+    }
+    else {
+        _conn->debug("Could not find correct mqtt topic");
+    }
+}
+
+void Thermostat::tick() {
+    float current_temperature = get_measured_temperature_C();
+    if (current_temperature > _max_temperature_C) {
+        digitalWrite(_relay_pin, HIGH);
+    }
+    else if (current_temperature < _min_temperature_C) {
+        digitalWrite(_relay_pin, LOW);
+    }
+}

@@ -221,24 +221,30 @@ class VEdirectReader {
 class Thermostat
 {
     public:
-        Thermostat(Connection * conn, DS18B20_temperature_sensors tempsensor, String name, String mqtt_topic);
+        Thermostat(Connection * conn, DS18B20_temperature_sensors tempsensor, uint8_t tempsensor_index, uint8_t relay_pin, String name, String mqtt_topic);
         void tick();
-        void set_max_temperature(float temperature);
-        void set_min_temperature(float temperature);
+        void set_max_temperature_C(float temperature);
+        void set_min_temperature_C(float temperature);
         void set_mqtt_max_temp_topic(String topic);
         void set_mqtt_min_temp_topic(String topic);
-        float get_min_temperature();
-        float get_max_temperature();
+        float get_min_temperature_C();
+        float get_max_temperature_C();
         String get_mqtt_max_temp_topic();
         String get_mqtt_min_temp_topic();
-        float get_measured_temperature();
+        float get_measured_temperature_C();
         void parse_mqtt_message(String mqtt_message, String topic); // sets min or max temp
 
     private:
+        Connection * _conn;
+        DS18B20_temperature_sensors _tempsensor;
+        uint8_t _tempsensor_index;
+        uint8_t _relay_pin;
         String _name;
         String _mqtt_topic;
         String _mqtt_max_temp_topic;
         String _mqtt_min_temp_topic;
+        float _max_temperature_C;
+        float _min_temperature_C
 
 }
 
