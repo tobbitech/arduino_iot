@@ -765,7 +765,7 @@ void VEdirectReader::parse_message() {
 }
 
 
-Thermostat::Thermostat(Connection * conn, DS18B20_temperature_sensors tempsensor,  uint8_t tempsensor_index, uint8_t relay_pin, String name, String mqtt_topic) {
+Thermostat::Thermostat(Connection * conn, DS18B20_temperature_sensors * tempsensor,  uint8_t tempsensor_index, uint8_t relay_pin, String name, String mqtt_topic) {
     _conn = conn;
     _tempsensor = tempsensor;
     _tempsensor_index;
@@ -818,7 +818,7 @@ String Thermostat::get_mqtt_min_temp_topic() {
 }
 
 float Thermostat::get_measured_temperature_C() {
-    float temperature = _tempsensor.getTemperature(_tempsensor_index);
+    float temperature = _tempsensor->getTemperature(_tempsensor_index);
     return(temperature);
 }
 

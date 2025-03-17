@@ -95,8 +95,6 @@ class InputMomentary {
             RELEASED
         };
 
-
-
     private:
         Connection * _conn_pointer;
         int _pin;
@@ -123,7 +121,6 @@ class InputMomentary {
         bool _is_released; 
         bool _is_sticky_held;
         bool _virtual_press = false;
-
 };
 
 #define HAN_READ_TIMEOUT_MS 100
@@ -221,7 +218,7 @@ class VEdirectReader {
 class Thermostat
 {
     public:
-        Thermostat(Connection * conn, DS18B20_temperature_sensors tempsensor, uint8_t tempsensor_index, uint8_t relay_pin, String name, String mqtt_topic);
+        Thermostat(Connection * conn, DS18B20_temperature_sensors * tempsensor, uint8_t tempsensor_index, uint8_t relay_pin, String name, String mqtt_topic);
         void tick();
         void set_max_temperature_C(float temperature);
         void set_min_temperature_C(float temperature);
@@ -236,7 +233,7 @@ class Thermostat
 
     private:
         Connection * _conn;
-        DS18B20_temperature_sensors _tempsensor;
+        DS18B20_temperature_sensors * _tempsensor;
         uint8_t _tempsensor_index;
         uint8_t _relay_pin;
         String _name;
@@ -244,8 +241,8 @@ class Thermostat
         String _mqtt_max_temp_topic;
         String _mqtt_min_temp_topic;
         float _max_temperature_C;
-        float _min_temperature_C
+        float _min_temperature_C;
 
-}
+};
 
 #endif
