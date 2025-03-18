@@ -176,7 +176,24 @@ void DS18B20_temperature_sensors::publishAllTemperatures()
         _conn_pointer->publish(deviceMqttTopic, String(_sensors.getTempC(_deviceAddresses[i])));
         _conn_pointer->debug(_deviceNames[i] + ": " + _sensors.getTempC(_deviceAddresses[i]) + "C");
     }
-}   
+}
+
+float DS18B20_temperature_sensors::getTemperature(uint8_t deviceIndex) {
+    if (deviceIndex >= _numberOfDevices) {
+        return(-200); // index out of range
+    }
+    _sensors.requestTemperatures();
+    return(_sensors.getTempC(_deviceAddresses[deviceIndex]));
+}
+
+float DS18B20_temperature_sensors::getTemperatureByName(String deviceName) {
+    for (uint8_t i = 0; i < _numberOfDevices; i++ ) {
+        if (_deviceNames[i] == deviceName ) {
+            return(getTemperature(i));
+        }
+    }
+    return(-201); // deviceName not found
+}
 
 InputMomentary::InputMomentary(
             Connection * conn_pointer, 
@@ -767,7 +784,7 @@ void VEdirectReader::parse_message() {
 
 Thermostat::Thermostat(Connection * conn, 
     DS18B20_temperature_sensors * tempsensor,
-    uint8_t tempsensor_index,
+    String tempsensor_name,
     uint8_t relay_pin,
     uint8_t pwm_on_value,
     String name, 
@@ -775,7 +792,7 @@ Thermostat::Thermostat(Connection * conn,
 ) {
     _conn = conn;
     _tempsensor = tempsensor;
-    _tempsensor_index;
+    _tempsensor_name = tempsensor_name;
     _relay_pin = relay_pin;
     _pwm_on_value = pwm_on_value,
     _name = name;
@@ -826,7 +843,7 @@ String Thermostat::get_mqtt_min_temp_topic() {
 }
 
 float Thermostat::get_measured_temperature_C() {
-    float temperature = _tempsensor->getTemperature(_tempsensor_index);
+    float temperature = _tempsensor->getTemperatureByName(_tempsensor_name);
     return(temperature);
 }
 

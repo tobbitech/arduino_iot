@@ -41,7 +41,8 @@ class DS18B20_temperature_sensors
         String convertAddressToString(DeviceAddress address);
         String getAddressString(int deviceIndex);
         uint8_t scanForSensors();
-        float getTemperature(int deviceIndex);
+        float getTemperature(uint8_t deviceIndex);
+        float getTemperatureByName(String deviceName);
         void mapNameToDeviceAddress(DeviceAddress address, String name);
         void publishAllTemperatures();
 
@@ -220,7 +221,7 @@ class Thermostat
     public:
         Thermostat(Connection * conn, 
         DS18B20_temperature_sensors * tempsensor, 
-        uint8_t tempsensor_index, 
+        String tempsensor_name, 
         uint8_t relay_pin,
         uint8_t pwm_on_value, // useful of supply voltage is higher than relay coil rating
         String name, 
@@ -241,7 +242,7 @@ class Thermostat
     private:
         Connection * _conn;
         DS18B20_temperature_sensors * _tempsensor;
-        uint8_t _tempsensor_index;
+        String _tempsensor_name;
         uint8_t _relay_pin;
         uint8_t _pwm_on_value;
         String _name;
