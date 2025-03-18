@@ -783,13 +783,15 @@ void VEdirectReader::parse_message() {
 
 
 Thermostat::Thermostat(Connection * conn, 
-    DS18B20_temperature_sensors * tempsensor,
-    String tempsensor_name,
-    uint8_t relay_pin,
-    uint8_t pwm_on_value,
-    String name, 
-    String mqtt_topic
-) {
+        DS18B20_temperature_sensors * tempsensor,
+        String tempsensor_name,
+        uint8_t relay_pin,
+        uint8_t pwm_on_value,
+        String name, 
+        String mqtt_topic,
+        float min_temperature_C,
+        float max_temperature_C
+    ) {
     _conn = conn;
     _tempsensor = tempsensor;
     _tempsensor_name = tempsensor_name;
@@ -797,6 +799,8 @@ Thermostat::Thermostat(Connection * conn,
     _pwm_on_value = pwm_on_value,
     _name = name;
     _mqtt_topic = mqtt_topic;
+    _min_temperature_C = min_temperature_C;
+    _max_temperature_C = max_temperature_C;
 
     pinMode(relay_pin, OUTPUT);
 }
