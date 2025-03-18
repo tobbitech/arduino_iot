@@ -218,7 +218,14 @@ class VEdirectReader {
 class Thermostat
 {
     public:
-        Thermostat(Connection * conn, DS18B20_temperature_sensors * tempsensor, uint8_t tempsensor_index, uint8_t relay_pin, String name, String mqtt_topic);
+        Thermostat(Connection * conn, 
+        DS18B20_temperature_sensors * tempsensor, 
+        uint8_t tempsensor_index, 
+        uint8_t relay_pin,
+        uint8_t pwm_on_value, // useful of supply voltage is higher than relay coil rating
+        String name, 
+        String mqtt_topic
+    );
         void tick();
         void set_max_temperature_C(float temperature);
         void set_min_temperature_C(float temperature);
@@ -236,6 +243,7 @@ class Thermostat
         DS18B20_temperature_sensors * _tempsensor;
         uint8_t _tempsensor_index;
         uint8_t _relay_pin;
+        uint8_t _pwm_on_value;
         String _name;
         String _mqtt_topic;
         String _mqtt_max_temp_topic;

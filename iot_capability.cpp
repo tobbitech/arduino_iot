@@ -765,11 +765,19 @@ void VEdirectReader::parse_message() {
 }
 
 
-Thermostat::Thermostat(Connection * conn, DS18B20_temperature_sensors * tempsensor,  uint8_t tempsensor_index, uint8_t relay_pin, String name, String mqtt_topic) {
+Thermostat::Thermostat(Connection * conn, 
+    DS18B20_temperature_sensors * tempsensor,
+    uint8_t tempsensor_index,
+    uint8_t relay_pin,
+    uint8_t pwm_on_value,
+    String name, 
+    String mqtt_topic
+) {
     _conn = conn;
     _tempsensor = tempsensor;
     _tempsensor_index;
     _relay_pin = relay_pin;
+    _pwm_on_value = pwm_on_value,
     _name = name;
     _mqtt_topic = mqtt_topic;
 
@@ -839,7 +847,7 @@ void Thermostat::parse_mqtt_message(String mqtt_message, String topic) {
 void Thermostat::tick() {
     float current_temperature = get_measured_temperature_C();
     if (current_temperature > _max_temperature_C) {
-        digitalWrite(_relay_pin, HIGH);
+        analogWrite(_relay_pin, _pwm_on_value);
     }
     else if (current_temperature < _min_temperature_C) {
         digitalWrite(_relay_pin, LOW);
