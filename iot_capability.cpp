@@ -801,6 +801,7 @@ Thermostat::Thermostat(Connection * conn,
     _mqtt_topic = mqtt_topic;
     _target_temperature_C = target_temperature_C;
     _hysteresis_C = hysteresis_C;
+    _is_cooling = false;
     // _mqtt_max_temp_topic = _mqtt_topic + "/max_temperature";
     // _mqtt_min_temp_topic = _mqtt_topic + "/min_temperature";
 }
@@ -872,6 +873,7 @@ void Thermostat::tick() {
     if (millis() > (_last_tick + 1000)) {
         _last_tick = millis();
         float current_temperature = get_measured_temperature_C();
+        // _conn->debug("T: " + String(current_temperature) + " T_min: " + String(_min_temperature_C) + " T_max: " + String(_max_temperature_C));
         if (current_temperature < _min_temperature_C) {
             if (_is_cooling == true ) {
                 _conn->debug("Cooling stopped. Current temperature: " + String(current_temperature, 1));
