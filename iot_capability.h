@@ -226,19 +226,20 @@ class Thermostat
             uint8_t pwm_on_value, // useful of supply voltage is higher than relay coil rating
             String name, 
             String mqtt_topic,
-            float min_temperature_C,
-            float max_temperature_C
+            float _target_temperature_C = 4.0,
+            float hysteresis_C = 1.0
         );
+        void begin();
         void tick();
-        void set_max_temperature_C(float temperature);
-        void set_min_temperature_C(float temperature);
-        void set_mqtt_max_temp_topic(String topic);
-        void set_mqtt_min_temp_topic(String topic);
+        void set_target_temperature_C(float temperature);
+        float get_target_temperature_C();
+        float get_hysteresis_C();
         float get_min_temperature_C();
         float get_max_temperature_C();
-        String get_mqtt_max_temp_topic();
-        String get_mqtt_min_temp_topic();
         float get_measured_temperature_C();
+        void set_mqtt_target_temp_topic(String topic);
+        String get_mqtt_main_topic();
+        String get_mqtt_target_temp_topic();
         void parse_mqtt_message(String mqtt_message, String topic); // sets min or max temp
 
     private:
@@ -249,10 +250,15 @@ class Thermostat
         uint8_t _pwm_on_value;
         String _name;
         String _mqtt_topic;
-        String _mqtt_max_temp_topic;
-        String _mqtt_min_temp_topic;
+        String _mqtt_target_temp_topic;
+        // String _mqtt_max_temp_topic;
+        // String _mqtt_min_temp_topic;
+        float _target_temperature_C;
+        float _hysteresis_C;
         float _max_temperature_C;
         float _min_temperature_C;
+        uint32_t _last_tick;
+        bool _is_cooling;
 
 };
 

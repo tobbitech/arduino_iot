@@ -789,8 +789,8 @@ Thermostat::Thermostat(Connection * conn,
         uint8_t pwm_on_value,
         String name, 
         String mqtt_topic,
-        float min_temperature_C,
-        float max_temperature_C
+        float target_temperature_C,
+        float hysteresis_C
     ) {
     _conn = conn;
     _tempsensor = tempsensor;
@@ -799,35 +799,44 @@ Thermostat::Thermostat(Connection * conn,
     _pwm_on_value = pwm_on_value,
     _name = name;
     _mqtt_topic = mqtt_topic;
-    _min_temperature_C = min_temperature_C;
-    _max_temperature_C = max_temperature_C;
-
-    pinMode(relay_pin, OUTPUT);
+    _target_temperature_C = target_temperature_C;
+    _hysteresis_C = hysteresis_C;
+    // _mqtt_max_temp_topic = _mqtt_topic + "/max_temperature";
+    // _mqtt_min_temp_topic = _mqtt_topic + "/min_temperature";
 }
 
-void Thermostat::set_max_temperature_C(float temperature) {
-    if (temperature <= _min_temperature_C) {
-            _conn->debug("New max temperature lower than min temperature");
-            return;
-    }
-    _max_temperature_C = temperature;
+void Thermostat::begin() {
+
+    _last_tick = millis();
+    pinMode(_relay_pin, OUTPUT);
+    _min_temperature_C = _target_temperature_C + _hysteresis_C;
+    _max_temperature_C = _target_temperature_C + _hysteresis_C;
+    _mqtt_target_temp_topic = _mqtt_topic + "/target_temperature_C";
+    _conn->subscribeMqttTopic(_mqtt_target_temp_topic);
+    _conn->debug("Thermostat created with topic: " + _mqtt_topic);
+}
+
+void Thermostat::set_target_temperature_C(float temperature) {
+    _target_temperature_C = temperature;
+    _min_temperature_C = _target_temperature_C + _hysteresis_C;
+    _max_temperature_C = _target_temperature_C - _hysteresis_C;
     return;
 }
 
-void Thermostat::set_min_temperature_C(float temperature) {
-    if (temperature >= _max_temperature_C) {
-            _conn->debug("New min temperature higher than max temperature");
-            return;
-    }
-    _min_temperature_C = temperature;
+void Thermostat::set_mqtt_target_temp_topic(String topic) {
+    _mqtt_target_temp_topic = topic;
 }
 
-void Thermostat::set_mqtt_max_temp_topic(String topic) {
-    _mqtt_max_temp_topic = topic;
+String Thermostat::get_mqtt_target_temp_topic() {
+    return(_mqtt_target_temp_topic);
 }
 
-void Thermostat::set_mqtt_min_temp_topic(String topic) {
-    _mqtt_min_temp_topic = topic;
+String Thermostat::get_mqtt_main_topic() {
+    return(_mqtt_topic);
+}
+
+float Thermostat::get_target_temperature_C() {
+    return(_target_temperature_C);
 }
 
 float Thermostat::get_max_temperature_C() {
@@ -838,13 +847,10 @@ float Thermostat::get_min_temperature_C() {
     return(_min_temperature_C);
 }
 
-String Thermostat::get_mqtt_max_temp_topic() {
-    return(_mqtt_max_temp_topic);
+float Thermostat::get_hysteresis_C() {
+    return(_hysteresis_C);
 }
 
-String Thermostat::get_mqtt_min_temp_topic() {
-    return(_mqtt_min_temp_topic);
-}
 
 float Thermostat::get_measured_temperature_C() {
     float temperature = _tempsensor->getTemperatureByName(_tempsensor_name);
@@ -852,25 +858,34 @@ float Thermostat::get_measured_temperature_C() {
 }
 
 void Thermostat::parse_mqtt_message(String mqtt_message, String topic) {
-    if (topic == _mqtt_max_temp_topic) {
-        float new_max_temperature = mqtt_message.toFloat();
-        set_max_temperature_C(new_max_temperature);
-    }
-    else if (topic == _mqtt_min_temp_topic) {
-        float new_min_temperature = mqtt_message.toFloat();
-        set_min_temperature_C(new_min_temperature);
-    }
-    else {
-        _conn->debug("Could not find correct mqtt topic");
+    // _conn->debug("Parsing topic: " + topic + " message: " + mqtt_message);
+
+    if (topic == _mqtt_target_temp_topic) {
+        float new_target_temperature = mqtt_message.toFloat();
+        set_target_temperature_C(new_target_temperature);
+        _conn->debug("Setting target temperature to " + String(new_target_temperature) + "°C");
     }
 }
 
 void Thermostat::tick() {
-    float current_temperature = get_measured_temperature_C();
-    if (current_temperature > _max_temperature_C) {
-        analogWrite(_relay_pin, _pwm_on_value);
+    // delay to avoid relay clapping
+    if (millis() > (_last_tick + 1000)) {
+        _last_tick = millis();
+        float current_temperature = get_measured_temperature_C();
+        if (current_temperature < _min_temperature_C) {
+            if (_is_cooling == true ) {
+                _conn->debug("Cooling stopped. Current temperature: " + String(current_temperature, 1));
+            }
+            analogWrite(_relay_pin, 0);
+            _is_cooling = false;
+        }
+        else if (current_temperature > _max_temperature_C) {
+            if ( _is_cooling == false ) {
+                _conn->debug("Start cooling. Current temperature: " + String(current_temperature, 1));
+            }
+            analogWrite(_relay_pin, _pwm_on_value);
+            _is_cooling = true;
+        }
     }
-    else if (current_temperature < _min_temperature_C) {
-        digitalWrite(_relay_pin, LOW);
-    }
+
 }
