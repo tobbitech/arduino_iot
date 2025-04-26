@@ -16,6 +16,21 @@
 #define GET_HAN_MESSAGE 100
 
 
+// ADC datalogger commands
+#define ADC_START 200
+#define ADC_STOP 201
+#define PAUSE 202
+#define SET_SAMPLE_NO 203
+#define SET_SAMPLE_INTERVAL 204
+#define GET_ADC 210
+#define MOVE_SERVO 220
+
+
+
+
+
+
+
 
 // NVS commands, not implemented
 #define NVS_READ 530

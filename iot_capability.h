@@ -41,7 +41,8 @@ class DS18B20_temperature_sensors
         String convertAddressToString(DeviceAddress address);
         String getAddressString(int deviceIndex);
         uint8_t scanForSensors();
-        float getTemperature(int deviceIndex);
+        float getTemperature(uint8_t deviceIndex);
+        float getTemperatureByName(String deviceName);
         void mapNameToDeviceAddress(DeviceAddress address, String name);
         void publishAllTemperatures();
         void tick();
@@ -99,8 +100,6 @@ class InputMomentary {
             RELEASED
         };
 
-
-
     private:
         Connection * _conn_pointer;
         int _pin;
@@ -127,7 +126,6 @@ class InputMomentary {
         bool _is_released; 
         bool _is_sticky_held;
         bool _virtual_press = false;
-
 };
 
 #define HAN_READ_TIMEOUT_MS 100
@@ -219,6 +217,53 @@ class VEdirectReader {
         bool _max_power_today_is_set;
         bool _yield_yesterday_is_set;
         bool _max_power_yesterday_is_set;
+};
+
+
+class Thermostat
+{
+    public:
+        Thermostat(Connection * conn, 
+            DS18B20_temperature_sensors * tempsensor, 
+            String tempsensor_name, 
+            uint8_t relay_pin,
+            uint8_t pwm_on_value, // useful of supply voltage is higher than relay coil rating
+            String name, 
+            String mqtt_topic,
+            float _target_temperature_C = 4.0,
+            float hysteresis_C = 1.0
+        );
+        void begin();
+        void tick();
+        void set_target_temperature_C(float temperature);
+        float get_target_temperature_C();
+        float get_hysteresis_C();
+        float get_min_temperature_C();
+        float get_max_temperature_C();
+        float get_measured_temperature_C();
+        void set_mqtt_target_temp_topic(String topic);
+        String get_mqtt_main_topic();
+        String get_mqtt_target_temp_topic();
+        void parse_mqtt_message(String mqtt_message, String topic); // sets min or max temp
+
+    private:
+        Connection * _conn;
+        DS18B20_temperature_sensors * _tempsensor;
+        String _tempsensor_name;
+        uint8_t _relay_pin;
+        uint8_t _pwm_on_value;
+        String _name;
+        String _mqtt_topic;
+        String _mqtt_target_temp_topic;
+        // String _mqtt_max_temp_topic;
+        // String _mqtt_min_temp_topic;
+        float _target_temperature_C;
+        float _hysteresis_C;
+        float _max_temperature_C;
+        float _min_temperature_C;
+        uint32_t _last_tick;
+        bool _is_cooling;
+
 };
 
 #endif
