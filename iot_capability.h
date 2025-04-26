@@ -45,6 +45,7 @@ class DS18B20_temperature_sensors
         float getTemperatureByName(String deviceName);
         void mapNameToDeviceAddress(DeviceAddress address, String name);
         void publishAllTemperatures();
+        void tick();
 
     private:
         Connection * _conn_pointer;
@@ -53,11 +54,14 @@ class DS18B20_temperature_sensors
         DeviceAddress _deviceAddresses[127];
         String _deviceNames[127];
         uint8_t _numberOfDevices;
+        uint8_t _currentDevice;
         String _name;
         String _mqtt_main_topic;
         String _addressMap[127];
         String _nameMap[127];
         size_t _mapSize;
+        void _get_sensor_data_nonblocking();
+        bool _getting_data;
 };
 
 class InputMomentary {

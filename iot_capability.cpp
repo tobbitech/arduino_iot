@@ -96,6 +96,7 @@ DS18B20_temperature_sensors::DS18B20_temperature_sensors(Connection * conn_point
     _mqtt_main_topic = mqtt_main_topic;
     _numberOfDevices = 0;
     _mapSize = 0;
+    _getting_data = false;
 }
 
 uint8_t DS18B20_temperature_sensors::scanForSensors()
@@ -170,13 +171,14 @@ String DS18B20_temperature_sensors::getName(int deviceIndex) {
 
 void DS18B20_temperature_sensors::publishAllTemperatures()
 {
-    _sensors.requestTemperatures();
-    for (int i = 0; i < _numberOfDevices; i++) {
-        String deviceMqttTopic = _mqtt_main_topic + "/" + _deviceNames[i];
-        _conn_pointer->publish(deviceMqttTopic, String(_sensors.getTempC(_deviceAddresses[i])));
-        _conn_pointer->debug(_deviceNames[i] + ": " + _sensors.getTempC(_deviceAddresses[i]) + "C");
-    }
-}
+   _getting_data = true;
+   _currentDevice = 0;
+   uint32_t request_start_time = millis();
+   _sensors.requestTemperatures();
+   uint32_t request_time_ms = millis() - request_start_time;
+   _conn_pointer->debug("Requested all sensors in " + String(request_time_ms) + "ms");
+}   
+
 
 float DS18B20_temperature_sensors::getTemperature(uint8_t deviceIndex) {
     if (deviceIndex >= _numberOfDevices) {
@@ -193,6 +195,25 @@ float DS18B20_temperature_sensors::getTemperatureByName(String deviceName) {
         }
     }
     return(-201); // deviceName not found
+}
+
+void DS18B20_temperature_sensors::_get_sensor_data_nonblocking() {
+    int i = _currentDevice++;
+
+    String deviceMqttTopic = _mqtt_main_topic + "/" + _deviceNames[i];
+    _conn_pointer->publish(deviceMqttTopic, String(_sensors.getTempC(_deviceAddresses[i])));
+    _conn_pointer->debug(_deviceNames[i] + ": " + _sensors.getTempC(_deviceAddresses[i]) + "C");
+
+    if (_currentDevice >= _numberOfDevices ) {
+        _getting_data = false;
+    }
+}
+
+void DS18B20_temperature_sensors::tick() {
+    if (_getting_data == true) {
+        _get_sensor_data_nonblocking();
+    }
+
 }
 
 InputMomentary::InputMomentary(
