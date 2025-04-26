@@ -97,7 +97,6 @@ class Connection
         bool _wifiOk;
         int _wifiLed;
         int _mqttLed;
-        DynamicJsonDocument _jsonDoc(uint16_t);
         WiFiUDP _ntpUDP;
         NTPClient _timeClient(WiFiUDP);
         Timer _statusIntervalTimer;

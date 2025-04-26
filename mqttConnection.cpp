@@ -22,12 +22,6 @@ Connection::Connection()
     
 }
 
-DynamicJsonDocument _jsonDoc(uint16_t size) 
-{
-    DynamicJsonDocument doc(size);
-    return(doc);
-}
-
 void WiFiStationWifiReady(WiFiEvent_t event, WiFiEventInfo_t info) {
     Serial.println("ARDUINO_EVENT_WIFI_READY");
     nvs2.log("Event: ARDUINO_EVENT_WIFI_READY");
