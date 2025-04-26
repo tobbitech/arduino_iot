@@ -17,8 +17,8 @@
 
 
 // ADC datalogger commands
-#define START 200
-#define STOP 201
+#define ADC_START 200
+#define ADC_STOP 201
 #define PAUSE 202
 #define SET_SAMPLE_NO 203
 #define SET_SAMPLE_INTERVAL 204
