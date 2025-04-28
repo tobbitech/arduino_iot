@@ -227,7 +227,6 @@ class Thermostat
             DS18B20_temperature_sensors * tempsensor, 
             String tempsensor_name, 
             uint8_t relay_pin,
-            uint8_t pwm_on_value, // useful of supply voltage is higher than relay coil rating
             String name, 
             String mqtt_topic,
             float _target_temperature_C = 4.0,
