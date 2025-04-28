@@ -807,7 +807,6 @@ Thermostat::Thermostat(Connection * conn,
         DS18B20_temperature_sensors * tempsensor,
         String tempsensor_name,
         uint8_t relay_pin,
-        uint8_t pwm_on_value,
         String name, 
         String mqtt_topic,
         float target_temperature_C,
@@ -817,7 +816,6 @@ Thermostat::Thermostat(Connection * conn,
     _tempsensor = tempsensor;
     _tempsensor_name = tempsensor_name;
     _relay_pin = relay_pin;
-    _pwm_on_value = pwm_on_value,
     _name = name;
     _mqtt_topic = mqtt_topic;
     _target_temperature_C = target_temperature_C;
@@ -899,14 +897,14 @@ void Thermostat::tick() {
             if (_is_cooling == true ) {
                 _conn->debug("Cooling stopped. Current temperature: " + String(current_temperature, 1));
             }
-            analogWrite(_relay_pin, 0);
+            digitalWrite(_relay_pin, LOW);
             _is_cooling = false;
         }
         else if (current_temperature > _max_temperature_C) {
             if ( _is_cooling == false ) {
                 _conn->debug("Start cooling. Current temperature: " + String(current_temperature, 1));
             }
-            analogWrite(_relay_pin, _pwm_on_value);
+            digitalWrite(_relay_pin, HIGH);
             _is_cooling = true;
         }
     }
