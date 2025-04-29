@@ -254,14 +254,14 @@ class Thermostat
         String _name;
         String _mqtt_topic;
         String _mqtt_target_temp_topic;
-        // String _mqtt_max_temp_topic;
-        // String _mqtt_min_temp_topic;
+        String _mqtt_cooling_state_topic;
         float _target_temperature_C;
         float _hysteresis_C;
         float _max_temperature_C;
         float _min_temperature_C;
         uint32_t _last_tick;
         bool _is_cooling;
+        bool _last_is_cooling;
 
 };
 

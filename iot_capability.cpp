@@ -821,8 +821,7 @@ Thermostat::Thermostat(Connection * conn,
     _target_temperature_C = target_temperature_C;
     _hysteresis_C = hysteresis_C;
     _is_cooling = false;
-    // _mqtt_max_temp_topic = _mqtt_topic + "/max_temperature";
-    // _mqtt_min_temp_topic = _mqtt_topic + "/min_temperature";
+    _last_is_cooling = true;
 }
 
 void Thermostat::begin() {
@@ -832,14 +831,15 @@ void Thermostat::begin() {
     _min_temperature_C = _target_temperature_C + _hysteresis_C;
     _max_temperature_C = _target_temperature_C + _hysteresis_C;
     _mqtt_target_temp_topic = _mqtt_topic + "/target_temperature_C";
+    _mqtt_cooling_state_topic = _mqtt_topic + "/state_cooling";
     _conn->subscribeMqttTopic(_mqtt_target_temp_topic);
     _conn->debug("Thermostat created with topic: " + _mqtt_topic);
 }
 
 void Thermostat::set_target_temperature_C(float temperature) {
     _target_temperature_C = temperature;
-    _min_temperature_C = _target_temperature_C + _hysteresis_C;
-    _max_temperature_C = _target_temperature_C - _hysteresis_C;
+    _min_temperature_C = _target_temperature_C - _hysteresis_C;
+    _max_temperature_C = _target_temperature_C + _hysteresis_C;
     return;
 }
 
@@ -889,24 +889,35 @@ void Thermostat::parse_mqtt_message(String mqtt_message, String topic) {
 
 void Thermostat::tick() {
     // delay to avoid relay clapping
-    if (millis() > (_last_tick + 1000)) {
+    if (millis() > (_last_tick + 5000)) {
         _last_tick = millis();
         float current_temperature = get_measured_temperature_C();
-        // _conn->debug("T: " + String(current_temperature) + " T_min: " + String(_min_temperature_C) + " T_max: " + String(_max_temperature_C));
+
         if (current_temperature < _min_temperature_C) {
-            if (_is_cooling == true ) {
-                _conn->debug("Cooling stopped. Current temperature: " + String(current_temperature, 1));
-            }
-            digitalWrite(_relay_pin, LOW);
             _is_cooling = false;
         }
         else if (current_temperature > _max_temperature_C) {
-            if ( _is_cooling == false ) {
-                _conn->debug("Start cooling. Current temperature: " + String(current_temperature, 1));
-            }
-            digitalWrite(_relay_pin, HIGH);
             _is_cooling = true;
         }
+
+        if (_is_cooling != _last_is_cooling) {
+            _last_is_cooling = _is_cooling;
+            String debug_info = "T: " + String(current_temperature, 1) + " [" + String(_min_temperature_C, 1) + ", " + String(_max_temperature_C, 1) + "] cooling: " + String(_is_cooling);
+            if (_is_cooling) {
+                // start cooling, close relay
+                _conn->debug("Start cooling. " + debug_info);
+                digitalWrite(_relay_pin, HIGH);
+                _conn->publish(_mqtt_cooling_state_topic, "1");
+            }
+            else {
+                // Stopp cooling, open relay
+                _conn->debug("Stopped cooling. " + debug_info);
+                digitalWrite(_relay_pin, LOW);
+                _conn->publish(_mqtt_cooling_state_topic, "0");
+
+            }
+        }
+
     }
 
 }
