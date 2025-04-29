@@ -243,6 +243,7 @@ class Thermostat
         void set_mqtt_target_temp_topic(String topic);
         String get_mqtt_main_topic();
         String get_mqtt_target_temp_topic();
+        bool is_cooling();
         void parse_mqtt_message(String mqtt_message, String topic); // sets min or max temp
 
     private:

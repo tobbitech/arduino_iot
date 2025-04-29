@@ -887,6 +887,10 @@ void Thermostat::parse_mqtt_message(String mqtt_message, String topic) {
     }
 }
 
+bool Thermostat::is_cooling() {
+    return(_is_cooling);
+}
+
 void Thermostat::tick() {
     // delay to avoid relay clapping
     if (millis() > (_last_tick + 5000)) {
