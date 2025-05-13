@@ -821,7 +821,8 @@ Thermostat::Thermostat(Connection * conn,
     _target_temperature_C = target_temperature_C;
     _hysteresis_C = hysteresis_C;
     _is_cooling = false;
-    _last_is_cooling = true;
+    // _last_is_cooling = true;
+    _state_changed = true;
 }
 
 void Thermostat::begin() {
@@ -897,15 +898,18 @@ void Thermostat::tick() {
         _last_tick = millis();
         float current_temperature = get_measured_temperature_C();
 
-        if (current_temperature < _min_temperature_C) {
+        if (current_temperature < _min_temperature_C && _is_cooling == true) {
             _is_cooling = false;
+            _state_changed = true;
         }
-        else if (current_temperature > _max_temperature_C) {
+        else if (current_temperature > _max_temperature_C && _is_cooling == false) {
             _is_cooling = true;
+            _state_changed = true;
         }
 
-        if (_is_cooling != _last_is_cooling) {
-            _last_is_cooling = _is_cooling;
+        if (_state_changed) {
+            _state_changed = false;
+            // _last_is_cooling = _is_cooling;
             String debug_info = "T: " + String(current_temperature, 1) + " [" + String(_min_temperature_C, 1) + ", " + String(_max_temperature_C, 1) + "] cooling: " + String(_is_cooling);
             if (_is_cooling) {
                 // start cooling, close relay

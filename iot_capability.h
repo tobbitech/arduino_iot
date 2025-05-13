@@ -262,7 +262,8 @@ class Thermostat
         float _min_temperature_C;
         uint32_t _last_tick;
         bool _is_cooling;
-        bool _last_is_cooling;
+        // bool _last_is_cooling;
+        bool _state_changed;
 
 };
 
