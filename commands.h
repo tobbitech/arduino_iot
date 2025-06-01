@@ -14,7 +14,7 @@
 
 // Non default commands
 #define GET_HAN_MESSAGE 100
-
+#define SET_DEEPSLEEP_TIME 200
 
 
 // NVS commands, not implemented

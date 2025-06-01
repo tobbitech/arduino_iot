@@ -4,7 +4,7 @@
 #include "commands.h"
 #include <Arduino.h>
 #include <PubSubClient.h>
-#include <WiFi.h>
+#include <ESP8266WiFi.h>
 #include <ArduinoOTA.h>
 #include <ArduinoJson.h>
 #include <NTPClient.h>
