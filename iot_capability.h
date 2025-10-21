@@ -264,6 +264,7 @@ class Thermostat
         bool _is_cooling;
         // bool _last_is_cooling;
         bool _state_changed;
+        uint32_t _minimum_off_time;
 
 };
 

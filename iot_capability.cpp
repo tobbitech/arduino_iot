@@ -823,18 +823,20 @@ Thermostat::Thermostat(Connection * conn,
     _is_cooling = false;
     // _last_is_cooling = true;
     _state_changed = true;
+    _minimum_off_time = 60000; // milliseconds
 }
 
 void Thermostat::begin() {
 
     _last_tick = millis();
     pinMode(_relay_pin, OUTPUT);
-    _min_temperature_C = _target_temperature_C + _hysteresis_C;
+    _min_temperature_C = _target_temperature_C - _hysteresis_C;
     _max_temperature_C = _target_temperature_C + _hysteresis_C;
     _mqtt_target_temp_topic = _mqtt_topic + "/target_temperature_C";
     _mqtt_cooling_state_topic = _mqtt_topic + "/state_cooling";
     _conn->subscribeMqttTopic(_mqtt_target_temp_topic);
     _conn->debug("Thermostat created with topic: " + _mqtt_topic);
+    _conn->debug("Temerature shall stay between " + String(_min_temperature_C) + "C and " + String(_max_temperature_C) + "C" );
 }
 
 void Thermostat::set_target_temperature_C(float temperature) {
@@ -894,7 +896,7 @@ bool Thermostat::is_cooling() {
 
 void Thermostat::tick() {
     // delay to avoid relay clapping
-    if (millis() > (_last_tick + 5000)) {
+    if (millis() > (_last_tick + _minimum_off_time)) {
         _last_tick = millis();
         float current_temperature = get_measured_temperature_C();
 
